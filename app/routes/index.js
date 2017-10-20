@@ -3,7 +3,7 @@
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 
-module.exports = function (app, passport) {
+module.exports = function (app, passport, googleFinance) {
 
 	function isLoggedIn (req, res, next) {
 		if (req.isAuthenticated()) {
@@ -16,8 +16,21 @@ module.exports = function (app, passport) {
 	var clickHandler = new ClickHandler();
 
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
-			res.sendFile(path + '/public/index.html');
+		.get(function (req, res) {
+			res.sendFile(path + '/dev/index.html');
+		});
+		
+	app.route('/retrievedata')
+		.get(function (req, res){
+			
+			googleFinance.historical({
+				symbol: 'NASDAQ:AAPL'
+				}, function (err, news) {
+					if (err){throw err;}
+					console.log(news);
+					res.send(news);
+			});
+			
 		});
 
 	app.route('/login')
@@ -41,11 +54,11 @@ module.exports = function (app, passport) {
 			res.json(req.user.github);
 		});
 
-	app.route('/auth/github')
-		.get(passport.authenticate('github'));
+	app.route('/auth/google')
+		.get(passport.authenticate('google', { scope: ['profile'] }));
 
-	app.route('/auth/github/callback')
-		.get(passport.authenticate('github', {
+	app.route('/oauth2callback')
+		.get(passport.authenticate('google', {
 			successRedirect: '/',
 			failureRedirect: '/login'
 		}));
