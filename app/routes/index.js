@@ -20,15 +20,17 @@ module.exports = function (app, passport, googleFinance) {
 			res.sendFile(path + '/dev/index.html');
 		});
 		
-	app.route('/retrievedata')
+	app.route('/retrievedata/:id')
 		.get(function (req, res){
 			
 			googleFinance.historical({
-				symbol: 'NASDAQ:AAPL'
+				symbol: 'NASDAQ:'+req.params.id
 				}, function (err, news) {
 					if (err){throw err;}
-					console.log(news);
-					res.send(news);
+					var sentArray = news;
+					sentArray[sentArray.length] = req.params.id;
+					console.log(sentArray);
+					res.send(sentArray);
 			});
 			
 		});

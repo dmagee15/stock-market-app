@@ -1470,9 +1470,68 @@ var App = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
+        _this.handleInput = function (event) {
+            console.log('handleInput');
+            _this.setState({
+                input: event.target.value
+            });
+        };
+
+        _this.handleSubmit = function (event) {
+            console.log('handleSubmit');
+            _this.setState({
+                submit: _this.state.input,
+                input: ''
+            }, _this.getNewLine);
+        };
+
+        _this.getNewLine = function () {
+            _this.setState({
+                loaded: false
+            }, function () {
+                var _this2 = this;
+
+                fetch('/retrievedata/' + this.state.submit, { method: 'get' }).then(function (data) {
+                    return data.json();
+                }).then(function (j) {
+                    var newArray = [];
+                    var id = j.pop();
+                    j.forEach(function (item) {
+                        var val = [new Date(item.date).getTime(), item.open];
+                        newArray.push(val);
+                    });
+                    newArray = newArray.sort(function (a, b) {
+                        return a[0] - b[0];
+                    });
+                    console.log(newArray);
+                    var temp = _this2.state.series.slice();
+                    console.log("original temp: " + temp);
+                    var newSeries = {
+                        name: id,
+                        data: newArray,
+                        color: 'blue'
+                    };
+                    temp = temp.push({
+                        name: id,
+                        data: newArray,
+                        color: 'blue'
+                    });
+                    console.log("temp after push: " + temp);
+                    _this2.setState({
+                        series: _this2.state.series.concat(newSeries),
+                        loaded: true
+                    }, function () {
+                        console.log("final state: " + this.state.series);
+                    });
+                });
+            });
+        };
+
         _this.state = {
             series: [0],
-            loaded: false
+            loaded: false,
+            input: 'ddd',
+            submit: ''
         };
         return _this;
     }
@@ -1480,12 +1539,13 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: "componentDidMount",
         value: function componentDidMount() {
-            var _this2 = this;
+            var _this3 = this;
 
-            fetch('/retrievedata', { method: 'get' }).then(function (data) {
+            fetch('/retrievedata/AAPL', { method: 'get' }).then(function (data) {
                 return data.json();
             }).then(function (j) {
                 var newArray = [];
+                var id = j.pop();
                 j.forEach(function (item) {
                     var val = [new Date(item.date).getTime(), item.open];
                     newArray.push(val);
@@ -1495,10 +1555,11 @@ var App = function (_React$Component) {
                 });
                 console.log(newArray);
 
-                _this2.setState({
+                _this3.setState({
                     series: [{
-                        name: "firstSeries",
-                        data: newArray
+                        name: id,
+                        data: newArray,
+                        color: 'red'
                     }],
                     loaded: true
                 });
@@ -1510,8 +1571,12 @@ var App = function (_React$Component) {
             var divStyle = {
                 margin: 'auto',
                 padding: 0,
-                width: '95%',
-                height: 500
+                width: '100%',
+                height: 400,
+                borderColor: 'black',
+                borderWidth: 1,
+                borderStyle: 'solid',
+                textAlign: 'center'
             };
             var divLoadingStyle = {
                 margin: 'auto',
@@ -1519,6 +1584,10 @@ var App = function (_React$Component) {
                 width: '95%',
                 height: 500,
                 textAlign: 'center'
+            };
+            var loadingStyle = {
+                fontSize: 40,
+                paddingTop: 100
             };
 
             var option = {
@@ -1531,12 +1600,9 @@ var App = function (_React$Component) {
                 title: {
                     text: 'Stock Price'
                 },
-                xAxis: {
-                    categories: ['Apples', 'Bananas', 'Oranges']
-                },
                 yAxis: {
                     title: {
-                        text: 'Fruit eaten'
+                        text: 'US Dollars'
                     }
                 },
                 series: this.state.series
@@ -1548,14 +1614,26 @@ var App = function (_React$Component) {
                     null,
                     _react2.default.createElement(
                         "div",
-                        { style: divStyle, id: "container" },
-                        _react2.default.createElement(
-                            "h1",
-                            null,
-                            "Loading"
-                        )
+                        { style: divStyle },
+                        _react2.default.createElement(SampleChart, { container: "chart", options: {
+                                chart: {
+                                    type: 'line'
+                                },
+                                rangeSelector: {
+                                    selected: 3
+                                },
+                                title: {
+                                    text: 'Stock Price'
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: 'US Dollars'
+                                    }
+                                },
+                                series: this.state.series
+                            } })
                     ),
-                    _react2.default.createElement(SampleChart, { container: "container", options: option })
+                    _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit })
                 );
             } else {
                 return _react2.default.createElement(
@@ -1563,13 +1641,14 @@ var App = function (_React$Component) {
                     null,
                     _react2.default.createElement(
                         "div",
-                        { style: divLoadingStyle, id: "container" },
+                        { style: divStyle },
                         _react2.default.createElement(
                             "h1",
-                            null,
+                            { style: loadingStyle },
                             "Loading"
                         )
-                    )
+                    ),
+                    _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit })
                 );
             }
         }
@@ -1578,8 +1657,41 @@ var App = function (_React$Component) {
     return App;
 }(_react2.default.Component);
 
-var SampleChart = function (_React$Component2) {
-    _inherits(SampleChart, _React$Component2);
+var InputSection = function (_React$Component2) {
+    _inherits(InputSection, _React$Component2);
+
+    function InputSection(props) {
+        _classCallCheck(this, InputSection);
+
+        return _possibleConstructorReturn(this, (InputSection.__proto__ || Object.getPrototypeOf(InputSection)).call(this, props));
+    }
+
+    _createClass(InputSection, [{
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    "h1",
+                    null,
+                    "Input Stock Id"
+                ),
+                _react2.default.createElement("input", { type: "text", value: this.props.input, onChange: this.props.handleInput }),
+                _react2.default.createElement(
+                    "button",
+                    { type: "submit", onClick: this.props.handleSubmit },
+                    "Submit"
+                )
+            );
+        }
+    }]);
+
+    return InputSection;
+}(_react2.default.Component);
+
+var SampleChart = function (_React$Component3) {
+    _inherits(SampleChart, _React$Component3);
 
     function SampleChart() {
         _classCallCheck(this, SampleChart);
@@ -1597,7 +1709,7 @@ var SampleChart = function (_React$Component2) {
                 });
             }
             // Set container which the chart should render to.
-            this.chart = new _highstock2.default.stockChart('container', this.props.options);
+            this.chart = new _highstock2.default.stockChart(this.props.container, this.props.options);
         }
         //Destroy chart before unmount.
 
@@ -1611,7 +1723,7 @@ var SampleChart = function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            return _react2.default.createElement('div', { id: this.props.container });
+            return _react2.default.createElement("div", { id: this.props.container });
         }
     }]);
 

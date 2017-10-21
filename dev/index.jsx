@@ -10,16 +10,19 @@ class App extends React.Component{
     super(props);
     this.state = {
         series: [0],
-        loaded: false
+        loaded: false,
+        input: 'ddd',
+        submit: ''
         };
     }
     
     componentDidMount() {
         
-        fetch('/retrievedata', {method: 'get'}).then(function(data) {
+        fetch('/retrievedata/AAPL', {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
         var newArray = [];
+                    var id = j.pop();
             		j.forEach(function(item) {
 					var val = [(new Date(item.date)).getTime(),item.open];
 					newArray.push(val);
@@ -30,8 +33,9 @@ class App extends React.Component{
 		
 		this.setState({
 		    series: [{
-		        name: "firstSeries",
-		        data: newArray
+		        name: id,
+		        data: newArray,
+		        color: 'red'
 		        }],
 		    loaded: true
 		});
@@ -40,12 +44,64 @@ class App extends React.Component{
         
     }
     
+    handleInput = (event) => {
+        console.log('handleInput');
+        this.setState({
+            input: event.target.value
+        });
+    }
+    
+    handleSubmit = (event) => {
+        console.log('handleSubmit');
+        this.setState({
+            submit: this.state.input,
+            input: ''
+        }, this.getNewLine);
+    }
+    
+    getNewLine = () => {
+        this.setState({
+            loaded: false
+        }, function(){
+            fetch('/retrievedata/'+this.state.submit, {method: 'get'}).then(function(data) {
+            return data.json();
+        }).then((j) =>{
+        var newArray = [];
+                    var id = j.pop();
+            		j.forEach(function(item) {
+					var val = [(new Date(item.date)).getTime(),item.open];
+					newArray.push(val);
+					});
+		newArray = newArray.sort(function(a, b) {
+        return a[0] - b[0]; });
+		console.log(newArray);
+
+		var newSeries = {
+		        name: id,
+		        data: newArray,
+		        color: 'blue'
+		        };
+		        
+		this.setState({
+		    series: this.state.series.concat(newSeries),
+		    loaded: true
+		});
+		
+        });
+        });
+        
+    }
+    
    render(){
        var divStyle = {
 					margin:'auto',
 					padding:0,
-					width: '95%',
-					height: 500
+					width: '100%',
+					height: 400,
+					borderColor: 'black',
+					borderWidth: 1,
+					borderStyle: 'solid',
+					textAlign: 'center'
 					};
 		var divLoadingStyle = {
 					margin:'auto',
@@ -54,6 +110,10 @@ class App extends React.Component{
 					height: 500,
 					textAlign: 'center'
 					};
+		var loadingStyle = {
+		    fontSize: 40,
+		    paddingTop:100
+		};
 					
 		var option = {
   chart: {
@@ -65,12 +125,9 @@ class App extends React.Component{
         title: {
             text: 'Stock Price'
         },
-        xAxis: {
-            categories: ['Apples', 'Bananas', 'Oranges']
-        },
         yAxis: {
             title: {
-                text: 'Fruit eaten'
+                text: 'US Dollars'
             }
         },
         series: this.state.series
@@ -79,15 +136,38 @@ class App extends React.Component{
         if(this.state.loaded){
             return (
            <div>
-          <div style={divStyle} id="container"><h1>Loading</h1></div>
-          <SampleChart container="container" options={option}/>
+            <div style={divStyle}>
+          <SampleChart container="chart" options={
+              {
+  chart: {
+            type: 'line'
+        },
+        rangeSelector: {
+            		selected: 3
+        		},
+        title: {
+            text: 'Stock Price'
+        },
+        yAxis: {
+            title: {
+                text: 'US Dollars'
+            }
+        },
+        series: this.state.series
+        }
+          }/>
+            </div>
+          <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
           </div>
           ); 
         }
         else{
             return (
            <div>
-            <div style={divLoadingStyle} id="container"><h1>Loading</h1></div>
+            <div style={divStyle}>
+            <h1 style={loadingStyle}>Loading</h1>
+            </div>
+            <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
           </div>
           ); 
         }
@@ -95,6 +175,21 @@ class App extends React.Component{
    }
       
    
+}
+
+class InputSection extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    render(){
+        return(
+            <div>
+                <h1>Input Stock Id</h1>
+                <input type='text' value={this.props.input} onChange={this.props.handleInput}/>
+                <button type='submit' onClick={this.props.handleSubmit}>Submit</button>
+            </div>
+            );
+    }
 }
 
 class SampleChart extends React.Component{
@@ -107,7 +202,7 @@ class SampleChart extends React.Component{
             });
         }
         // Set container which the chart should render to.
-        this.chart = new Highcharts.stockChart('container',
+        this.chart = new Highcharts.stockChart(this.props.container,
             this.props.options
         );
     }
@@ -117,11 +212,14 @@ class SampleChart extends React.Component{
     }
     //Create the div which the chart will be rendered to.
     render() {
-        return React.createElement('div', { id: this.props.container });
+        return (
+            <div id={this.props.container}></div>
+            );
     }
       
    
 }
+
 
 ReactDOM.render(
         <App/>,
