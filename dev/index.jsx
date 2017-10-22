@@ -9,10 +9,12 @@ class App extends React.Component{
     constructor(props) {
     super(props);
     this.state = {
-        series: [0],
+        series: [],
         loaded: false,
-        input: 'ddd',
-        submit: ''
+        input: '',
+        submit: '',
+        deleteinput: '',
+        deletesubmit: ''
         };
     }
     
@@ -59,6 +61,21 @@ class App extends React.Component{
         }, this.getNewLine);
     }
     
+    handleDeleteInput = (event) => {
+        console.log('handleDeleteInput');
+        this.setState({
+            deleteinput: event.target.value
+        });
+    }
+    
+    handleDelete = (event) => {
+        console.log('handleDelete');
+        this.setState({
+            deletesubmit: this.state.deleteinput,
+            deleteinput: ''
+        }, this.deleteStock);
+    }
+    
     getNewLine = () => {
         this.setState({
             loaded: false
@@ -75,11 +92,12 @@ class App extends React.Component{
 		newArray = newArray.sort(function(a, b) {
         return a[0] - b[0]; });
 		console.log(newArray);
-
+        var length = this.state.series.length;
+        var color = (length==0)?'red':(length==1)?'blue':'green';
 		var newSeries = {
 		        name: id,
 		        data: newArray,
-		        color: 'blue'
+		        color: color
 		        };
 		        
 		this.setState({
@@ -90,6 +108,26 @@ class App extends React.Component{
         });
         });
         
+    }
+    
+    deleteStock = () => {
+        this.setState({
+            loaded: false
+        }, function(){
+        var temp = this.state.series.slice();
+        var result = [];
+        var length = temp.length;
+        for(var x=0;x<length;x++){
+            if(x!=Number(this.state.deletesubmit)){
+                result.push(temp[x]);
+            }
+        }
+        console.log(result);
+        this.setState({
+		    series: result,
+		    loaded: true
+		});
+        });
     }
     
    render(){
@@ -110,28 +148,14 @@ class App extends React.Component{
 					height: 500,
 					textAlign: 'center'
 					};
+		var divInputStyle = {
+		    textAlign: 'center'
+		};
 		var loadingStyle = {
-		    fontSize: 40,
+		    fontSize: 100,
 		    paddingTop:100
 		};
 					
-		var option = {
-  chart: {
-            type: 'line'
-        },
-        rangeSelector: {
-            		selected: 3
-        		},
-        title: {
-            text: 'Stock Price'
-        },
-        yAxis: {
-            title: {
-                text: 'US Dollars'
-            }
-        },
-        series: this.state.series
-        };
         
         if(this.state.loaded){
             return (
@@ -157,7 +181,10 @@ class App extends React.Component{
         }
           }/>
             </div>
+            <div style={divInputStyle}>
           <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
+          <DeleteSection input={this.state.deleteinput} handleDelete={this.handleDelete} handleDeleteInput={this.handleDeleteInput}/>
+            </div>
           </div>
           ); 
         }
@@ -167,7 +194,10 @@ class App extends React.Component{
             <div style={divStyle}>
             <h1 style={loadingStyle}>Loading</h1>
             </div>
+            <div style={divInputStyle}>
             <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
+            <DeleteSection input={this.state.deleteinput} handleDelete={this.handleDelete} handleDeleteInput={this.handleDeleteInput}/>
+            </div>
           </div>
           ); 
         }
@@ -187,6 +217,21 @@ class InputSection extends React.Component{
                 <h1>Input Stock Id</h1>
                 <input type='text' value={this.props.input} onChange={this.props.handleInput}/>
                 <button type='submit' onClick={this.props.handleSubmit}>Submit</button>
+            </div>
+            );
+    }
+}
+
+class DeleteSection extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    render(){
+        return(
+            <div>
+                <h1>Delete Stock Id</h1>
+                <input type='text' value={this.props.input} onChange={this.props.handleDeleteInput}/>
+                <button type='submit' onClick={this.props.handleDelete}>Delete</button>
             </div>
             );
     }

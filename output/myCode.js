@@ -1485,6 +1485,21 @@ var App = function (_React$Component) {
             }, _this.getNewLine);
         };
 
+        _this.handleDeleteInput = function (event) {
+            console.log('handleDeleteInput');
+            _this.setState({
+                deleteinput: event.target.value
+            });
+        };
+
+        _this.handleDelete = function (event) {
+            console.log('handleDelete');
+            _this.setState({
+                deletesubmit: _this.state.deleteinput,
+                deleteinput: ''
+            }, _this.deleteStock);
+        };
+
         _this.getNewLine = function () {
             _this.setState({
                 loaded: false
@@ -1504,34 +1519,49 @@ var App = function (_React$Component) {
                         return a[0] - b[0];
                     });
                     console.log(newArray);
-                    var temp = _this2.state.series.slice();
-                    console.log("original temp: " + temp);
+                    var length = _this2.state.series.length;
+                    var color = length == 0 ? 'red' : length == 1 ? 'blue' : 'green';
                     var newSeries = {
                         name: id,
                         data: newArray,
-                        color: 'blue'
+                        color: color
                     };
-                    temp = temp.push({
-                        name: id,
-                        data: newArray,
-                        color: 'blue'
-                    });
-                    console.log("temp after push: " + temp);
+
                     _this2.setState({
                         series: _this2.state.series.concat(newSeries),
                         loaded: true
-                    }, function () {
-                        console.log("final state: " + this.state.series);
                     });
                 });
             });
         };
 
+        _this.deleteStock = function () {
+            _this.setState({
+                loaded: false
+            }, function () {
+                var temp = this.state.series.slice();
+                var result = [];
+                var length = temp.length;
+                for (var x = 0; x < length; x++) {
+                    if (x != Number(this.state.deletesubmit)) {
+                        result.push(temp[x]);
+                    }
+                }
+                console.log(result);
+                this.setState({
+                    series: result,
+                    loaded: true
+                });
+            });
+        };
+
         _this.state = {
-            series: [0],
+            series: [],
             loaded: false,
-            input: 'ddd',
-            submit: ''
+            input: '',
+            submit: '',
+            deleteinput: '',
+            deletesubmit: ''
         };
         return _this;
     }
@@ -1585,27 +1615,12 @@ var App = function (_React$Component) {
                 height: 500,
                 textAlign: 'center'
             };
-            var loadingStyle = {
-                fontSize: 40,
-                paddingTop: 100
+            var divInputStyle = {
+                textAlign: 'center'
             };
-
-            var option = {
-                chart: {
-                    type: 'line'
-                },
-                rangeSelector: {
-                    selected: 3
-                },
-                title: {
-                    text: 'Stock Price'
-                },
-                yAxis: {
-                    title: {
-                        text: 'US Dollars'
-                    }
-                },
-                series: this.state.series
+            var loadingStyle = {
+                fontSize: 100,
+                paddingTop: 100
             };
 
             if (this.state.loaded) {
@@ -1633,7 +1648,12 @@ var App = function (_React$Component) {
                                 series: this.state.series
                             } })
                     ),
-                    _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit })
+                    _react2.default.createElement(
+                        "div",
+                        { style: divInputStyle },
+                        _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
+                        _react2.default.createElement(DeleteSection, { input: this.state.deleteinput, handleDelete: this.handleDelete, handleDeleteInput: this.handleDeleteInput })
+                    )
                 );
             } else {
                 return _react2.default.createElement(
@@ -1648,7 +1668,12 @@ var App = function (_React$Component) {
                             "Loading"
                         )
                     ),
-                    _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit })
+                    _react2.default.createElement(
+                        "div",
+                        { style: divInputStyle },
+                        _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
+                        _react2.default.createElement(DeleteSection, { input: this.state.deleteinput, handleDelete: this.handleDelete, handleDeleteInput: this.handleDeleteInput })
+                    )
                 );
             }
         }
@@ -1690,8 +1715,41 @@ var InputSection = function (_React$Component2) {
     return InputSection;
 }(_react2.default.Component);
 
-var SampleChart = function (_React$Component3) {
-    _inherits(SampleChart, _React$Component3);
+var DeleteSection = function (_React$Component3) {
+    _inherits(DeleteSection, _React$Component3);
+
+    function DeleteSection(props) {
+        _classCallCheck(this, DeleteSection);
+
+        return _possibleConstructorReturn(this, (DeleteSection.__proto__ || Object.getPrototypeOf(DeleteSection)).call(this, props));
+    }
+
+    _createClass(DeleteSection, [{
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    "h1",
+                    null,
+                    "Delete Stock Id"
+                ),
+                _react2.default.createElement("input", { type: "text", value: this.props.input, onChange: this.props.handleDeleteInput }),
+                _react2.default.createElement(
+                    "button",
+                    { type: "submit", onClick: this.props.handleDelete },
+                    "Delete"
+                )
+            );
+        }
+    }]);
+
+    return DeleteSection;
+}(_react2.default.Component);
+
+var SampleChart = function (_React$Component4) {
+    _inherits(SampleChart, _React$Component4);
 
     function SampleChart() {
         _classCallCheck(this, SampleChart);
