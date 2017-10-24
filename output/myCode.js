@@ -1500,6 +1500,15 @@ var App = function (_React$Component) {
             }, _this.deleteStock);
         };
 
+        _this.handleButtonDelete = function (data) {
+            console.log('handleButtonDelete');
+            console.log(data);
+            _this.setState({
+                deletesubmit: data,
+                deleteinput: ''
+            }, _this.deleteStock);
+        };
+
         _this.getNewLine = function () {
             _this.setState({
                 loaded: false
@@ -1574,6 +1583,7 @@ var App = function (_React$Component) {
             fetch('/retrievedata/AAPL', { method: 'get' }).then(function (data) {
                 return data.json();
             }).then(function (j) {
+
                 var newArray = [];
                 var id = j.pop();
                 j.forEach(function (item) {
@@ -1620,7 +1630,7 @@ var App = function (_React$Component) {
             };
             var loadingStyle = {
                 fontSize: 100,
-                paddingTop: 100
+                paddingTop: 50
             };
 
             if (this.state.loaded) {
@@ -1652,7 +1662,8 @@ var App = function (_React$Component) {
                         "div",
                         { style: divInputStyle },
                         _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
-                        _react2.default.createElement(DeleteSection, { input: this.state.deleteinput, handleDelete: this.handleDelete, handleDeleteInput: this.handleDeleteInput })
+                        _react2.default.createElement(DeleteSection, { input: this.state.deleteinput, handleDelete: this.handleDelete, handleDeleteInput: this.handleDeleteInput }),
+                        _react2.default.createElement(StockListSection, { stocks: this.state.series, handleButtonDelete: this.handleButtonDelete })
                     )
                 );
             } else {
@@ -1672,7 +1683,8 @@ var App = function (_React$Component) {
                         "div",
                         { style: divInputStyle },
                         _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
-                        _react2.default.createElement(DeleteSection, { input: this.state.deleteinput, handleDelete: this.handleDelete, handleDeleteInput: this.handleDeleteInput })
+                        _react2.default.createElement(DeleteSection, { input: this.state.deleteinput, handleDelete: this.handleDelete, handleDeleteInput: this.handleDeleteInput }),
+                        _react2.default.createElement(StockListSection, { stocks: this.state.series, handleButtonDelete: this.handleButtonDelete })
                     )
                 );
             }
@@ -1682,8 +1694,107 @@ var App = function (_React$Component) {
     return App;
 }(_react2.default.Component);
 
-var InputSection = function (_React$Component2) {
-    _inherits(InputSection, _React$Component2);
+var StockListSection = function (_React$Component2) {
+    _inherits(StockListSection, _React$Component2);
+
+    function StockListSection(props) {
+        _classCallCheck(this, StockListSection);
+
+        return _possibleConstructorReturn(this, (StockListSection.__proto__ || Object.getPrototypeOf(StockListSection)).call(this, props));
+    }
+
+    _createClass(StockListSection, [{
+        key: "render",
+        value: function render() {
+            var _this5 = this;
+
+            var StockListSectionStyle = {
+                maxWidth: 800,
+                margin: 'auto',
+                textAlign: 'left'
+            };
+
+            var array = this.props.stocks;
+            console.log(array);
+            var length = array.length;
+            var result = [];
+            for (var x = 0; x < length; x++) {
+                var temp = this.props.stocks[x];
+                result.push(_react2.default.createElement(StockBox, { stockInfo: temp, key: x }));
+            }
+
+            return _react2.default.createElement(
+                "div",
+                { style: StockListSectionStyle },
+                this.props.stocks.map(function (stock, index) {
+                    return _react2.default.createElement(StockBox, { stockInfo: stock, index: index, key: index, handleButtonDelete: _this5.props.handleButtonDelete });
+                })
+            );
+        }
+    }]);
+
+    return StockListSection;
+}(_react2.default.Component);
+
+var StockBox = function (_React$Component3) {
+    _inherits(StockBox, _React$Component3);
+
+    function StockBox(props) {
+        _classCallCheck(this, StockBox);
+
+        return _possibleConstructorReturn(this, (StockBox.__proto__ || Object.getPrototypeOf(StockBox)).call(this, props));
+    }
+
+    _createClass(StockBox, [{
+        key: "render",
+        value: function render() {
+            var _this7 = this;
+
+            var StockBoxStyle = {
+                width: '40%',
+                height: 70,
+                borderColor: 'black',
+                borderWidth: 1,
+                borderStyle: 'solid',
+                display: 'inline-block',
+                marginTop: 25,
+                marginRight: '4%',
+                marginLeft: '4%',
+                marginBottom: 25,
+                textAlign: 'center',
+                position: 'relative'
+            };
+            var StockBoxTextStyle = {
+                fontSize: 25,
+                paddingTop: 10
+            };
+            var StockBoxExitStyle = {
+                float: 'right'
+            };
+            return _react2.default.createElement(
+                "div",
+                { style: StockBoxStyle },
+                _react2.default.createElement(
+                    "button",
+                    { style: StockBoxExitStyle, onClick: function onClick() {
+                            return _this7.props.handleButtonDelete(_this7.props.index);
+                        } },
+                    "X"
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { style: StockBoxTextStyle },
+                    this.props.stockInfo.name
+                )
+            );
+        }
+    }]);
+
+    return StockBox;
+}(_react2.default.Component);
+
+var InputSection = function (_React$Component4) {
+    _inherits(InputSection, _React$Component4);
 
     function InputSection(props) {
         _classCallCheck(this, InputSection);
@@ -1715,8 +1826,8 @@ var InputSection = function (_React$Component2) {
     return InputSection;
 }(_react2.default.Component);
 
-var DeleteSection = function (_React$Component3) {
-    _inherits(DeleteSection, _React$Component3);
+var DeleteSection = function (_React$Component5) {
+    _inherits(DeleteSection, _React$Component5);
 
     function DeleteSection(props) {
         _classCallCheck(this, DeleteSection);
@@ -1748,8 +1859,8 @@ var DeleteSection = function (_React$Component3) {
     return DeleteSection;
 }(_react2.default.Component);
 
-var SampleChart = function (_React$Component4) {
-    _inherits(SampleChart, _React$Component4);
+var SampleChart = function (_React$Component6) {
+    _inherits(SampleChart, _React$Component6);
 
     function SampleChart() {
         _classCallCheck(this, SampleChart);

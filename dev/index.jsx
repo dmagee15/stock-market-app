@@ -23,6 +23,7 @@ class App extends React.Component{
         fetch('/retrievedata/AAPL', {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
+ 
         var newArray = [];
                     var id = j.pop();
             		j.forEach(function(item) {
@@ -72,6 +73,15 @@ class App extends React.Component{
         console.log('handleDelete');
         this.setState({
             deletesubmit: this.state.deleteinput,
+            deleteinput: ''
+        }, this.deleteStock);
+    }
+    
+    handleButtonDelete = (data) => {
+        console.log('handleButtonDelete');
+        console.log(data);
+        this.setState({
+            deletesubmit: data,
             deleteinput: ''
         }, this.deleteStock);
     }
@@ -153,7 +163,7 @@ class App extends React.Component{
 		};
 		var loadingStyle = {
 		    fontSize: 100,
-		    paddingTop:100
+		    paddingTop:50
 		};
 					
         
@@ -184,6 +194,7 @@ class App extends React.Component{
             <div style={divInputStyle}>
           <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
           <DeleteSection input={this.state.deleteinput} handleDelete={this.handleDelete} handleDeleteInput={this.handleDeleteInput}/>
+          <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
             </div>
           </div>
           ); 
@@ -197,6 +208,7 @@ class App extends React.Component{
             <div style={divInputStyle}>
             <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
             <DeleteSection input={this.state.deleteinput} handleDelete={this.handleDelete} handleDeleteInput={this.handleDeleteInput}/>
+            <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
             </div>
           </div>
           ); 
@@ -205,6 +217,71 @@ class App extends React.Component{
    }
       
    
+}
+
+class StockListSection extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    render(){
+        var StockListSectionStyle = {
+            maxWidth: 800,
+            margin: 'auto',
+            textAlign: 'left'
+        };
+        
+        var array = this.props.stocks;
+        console.log(array);
+        var length = array.length;
+        var result = [];
+        for(var x=0;x<length;x++){
+            var temp = this.props.stocks[x];
+            result.push(<StockBox stockInfo={temp} key={x}/>);
+        }
+        
+        return(
+            <div style={StockListSectionStyle}>
+                {this.props.stocks.map((stock, index) =>
+                    <StockBox stockInfo={stock} index={index} key={index} handleButtonDelete={this.props.handleButtonDelete}/>
+                )}
+            </div>
+            );
+    }
+}
+
+class StockBox extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    render(){
+        var StockBoxStyle = {
+            width: '40%',
+            height: 70,
+            borderColor: 'black',
+			borderWidth: 1,
+			borderStyle: 'solid',
+			display: 'inline-block',
+			marginTop: 25,
+			marginRight: '4%',
+			marginLeft: '4%',
+			marginBottom: 25,
+			textAlign: 'center',
+			position: 'relative'
+        };
+        var StockBoxTextStyle = {
+            fontSize: 25,
+            paddingTop: 10
+        }
+        var StockBoxExitStyle = {
+            float: 'right'
+        }
+        return(
+            <div style={StockBoxStyle}>
+                <button style={StockBoxExitStyle} onClick={() => this.props.handleButtonDelete(this.props.index)}>X</button>
+                <p style={StockBoxTextStyle}>{this.props.stockInfo.name}</p>
+            </div>
+            );
+    }
 }
 
 class InputSection extends React.Component{
