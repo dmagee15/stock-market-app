@@ -4,6 +4,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Highcharts from "highcharts/highstock";
 import addFunnel from "highcharts/modules/funnel";
+import openSocket from 'socket.io-client';
+const socket = openSocket('https://stock-market-app-dmagee15.c9users.io/');
 
 class App extends React.Component{
     constructor(props) {
@@ -19,7 +21,6 @@ class App extends React.Component{
     }
     
     componentDidMount() {
-        
         fetch('/retrievedata/AAPL', {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
@@ -127,15 +128,27 @@ class App extends React.Component{
         var temp = this.state.series.slice();
         var result = [];
         var length = temp.length;
+        var stockName = '';
         for(var x=0;x<length;x++){
             if(x!=Number(this.state.deletesubmit)){
                 result.push(temp[x]);
+            }
+            else{
+                stockName = temp[x].name;
             }
         }
         console.log(result);
         this.setState({
 		    series: result,
 		    loaded: true
+		}, function(){
+		    fetch('/deletedata', {
+            method: 'POST',
+            headers:{ "Content-Type": "application/json" },
+            body: JSON.stringify({
+                data: stockName
+            })
+});
 		});
         });
     }
@@ -159,17 +172,27 @@ class App extends React.Component{
 					textAlign: 'center'
 					};
 		var divInputStyle = {
-		    textAlign: 'center'
+		    textAlign: 'center',
+		    maxWidth: 1000,
+		    minWidth: 800,
+		    margin: 'auto'
 		};
 		var loadingStyle = {
 		    fontSize: 100,
 		    paddingTop:50
 		};
+		var headingStyle = {
+		    textAlign:'center',
+		    width: '100%'
+		};
 					
         
-        if(this.state.loaded){
+        if(this.state.loaded && this.state.series.length != 0){
             return (
            <div>
+            <div style={headingStyle}>
+            <h1>Chart the Stock Market</h1>
+            </div>
             <div style={divStyle}>
           <SampleChart container="chart" options={
               {
@@ -193,7 +216,6 @@ class App extends React.Component{
             </div>
             <div style={divInputStyle}>
           <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
-          <DeleteSection input={this.state.deleteinput} handleDelete={this.handleDelete} handleDeleteInput={this.handleDeleteInput}/>
           <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
             </div>
           </div>
@@ -202,12 +224,14 @@ class App extends React.Component{
         else{
             return (
            <div>
+            <div style={headingStyle}>
+            <h1>Chart the Stock Market</h1>
+            </div>
             <div style={divStyle}>
             <h1 style={loadingStyle}>Loading</h1>
             </div>
             <div style={divInputStyle}>
             <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
-            <DeleteSection input={this.state.deleteinput} handleDelete={this.handleDelete} handleDeleteInput={this.handleDeleteInput}/>
             <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
             </div>
           </div>
@@ -227,7 +251,10 @@ class StockListSection extends React.Component{
         var StockListSectionStyle = {
             maxWidth: 800,
             margin: 'auto',
-            textAlign: 'left'
+            textAlign: 'left',
+            display:'inline-block',
+            minWidth: 600,
+            float: 'right'
         };
         
         var array = this.props.stocks;
@@ -257,9 +284,9 @@ class StockBox extends React.Component{
         var StockBoxStyle = {
             width: '40%',
             height: 70,
-            borderColor: 'black',
-			borderWidth: 1,
-			borderStyle: 'solid',
+            borderBottomColor: 'black',
+			borderBottomWidth: 1,
+			borderBottomStyle: 'solid',
 			display: 'inline-block',
 			marginTop: 25,
 			marginRight: '4%',
@@ -289,8 +316,14 @@ class InputSection extends React.Component{
         super(props);
     }
     render(){
+        var InputSectionStyle = {
+            display:'inline-block',
+            verticalAlign: 'top',
+            marginRight: 100,
+            float:'left'
+        };
         return(
-            <div>
+            <div style={InputSectionStyle}>
                 <h1>Input Stock Id</h1>
                 <input type='text' value={this.props.input} onChange={this.props.handleInput}/>
                 <button type='submit' onClick={this.props.handleSubmit}>Submit</button>
