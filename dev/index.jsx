@@ -21,11 +21,59 @@ class App extends React.Component{
     }
     
     componentDidMount() {
-        fetch('/retrievedata/AAPL', {method: 'get'}).then(function(data) {
+        fetch('/retrievedata/', {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
- 
-        var newArray = [];
+            
+        var totalSeries = [];
+        if(j==null){
+            this.setState({
+		    series: totalSeries,
+		    loaded: false
+		    });
+        }
+        else{
+            
+        var newArray;
+        var colors = ['red','green','blue','orange','purple'];
+        var colorCount = 0;
+        console.log(j);
+        
+        for(var propName in j) {
+            newArray = [];
+        if(j.hasOwnProperty(propName)) {
+            var propValue = j[propName];
+            console.log(propName);
+            console.log(propValue);
+        propValue.forEach(function(item) {
+            var val = [(new Date(item.date)).getTime(),item.open];
+			newArray.push(val);
+        });
+        
+        newArray = newArray.sort(function(a, b) {
+        return a[0] - b[0]; });
+        console.log(newArray);
+        var newSeries = {
+		        name: propName,
+		        data: newArray,
+		        color: colors[colorCount]
+		        };
+		 colorCount++;
+		 totalSeries.push(newSeries);
+		 console.log(totalSeries);
+        // do something with each element here
+         }
+        }
+        
+        this.setState({
+		    series: totalSeries,
+		    loaded: true
+		});
+        
+        }
+        
+        
+        {/*
                     var id = j.pop();
             		j.forEach(function(item) {
 					var val = [(new Date(item.date)).getTime(),item.open];
@@ -43,9 +91,8 @@ class App extends React.Component{
 		        }],
 		    loaded: true
 		});
-		
+		*/}
         });
-        
     }
     
     handleInput = (event) => {
@@ -94,6 +141,55 @@ class App extends React.Component{
             fetch('/retrievedata/'+this.state.submit, {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
+        
+        var totalSeries = [];
+        if(j==null){
+            this.setState({
+		    series: totalSeries,
+		    loaded: false
+		    });
+        }
+        else{
+            
+        var newArray;
+        var colors = ['red','green','blue','orange','purple'];
+        var colorCount = 0;
+        console.log(j);
+        
+        for(var propName in j) {
+            newArray = [];
+        if(j.hasOwnProperty(propName)) {
+            var propValue = j[propName];
+            console.log(propName);
+            console.log(propValue);
+        propValue.forEach(function(item) {
+            var val = [(new Date(item.date)).getTime(),item.open];
+			newArray.push(val);
+        });
+        
+        newArray = newArray.sort(function(a, b) {
+        return a[0] - b[0]; });
+        console.log(newArray);
+        var newSeries = {
+		        name: propName,
+		        data: newArray,
+		        color: colors[colorCount]
+		        };
+		 colorCount++;
+		 totalSeries.push(newSeries);
+		 console.log(totalSeries);
+        // do something with each element here
+         }
+        }
+        
+        this.setState({
+		    series: totalSeries,
+		    loaded: true
+		});
+        
+        }
+        
+        {/*    
         var newArray = [];
                     var id = j.pop();
             		j.forEach(function(item) {
@@ -114,9 +210,11 @@ class App extends React.Component{
 		this.setState({
 		    series: this.state.series.concat(newSeries),
 		    loaded: true
-		});
+		}); */}
 		
         });
+        
+        
         });
         
     }

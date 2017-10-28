@@ -4790,28 +4790,75 @@ var App = function (_React$Component) {
                 fetch('/retrievedata/' + this.state.submit, { method: 'get' }).then(function (data) {
                     return data.json();
                 }).then(function (j) {
-                    var newArray = [];
-                    var id = j.pop();
-                    j.forEach(function (item) {
-                        var val = [new Date(item.date).getTime(), item.open];
-                        newArray.push(val);
-                    });
-                    newArray = newArray.sort(function (a, b) {
-                        return a[0] - b[0];
-                    });
-                    console.log(newArray);
-                    var length = _this2.state.series.length;
-                    var color = length == 0 ? 'red' : length == 1 ? 'blue' : 'green';
-                    var newSeries = {
-                        name: id,
-                        data: newArray,
-                        color: color
-                    };
 
-                    _this2.setState({
-                        series: _this2.state.series.concat(newSeries),
+                    var totalSeries = [];
+                    if (j == null) {
+                        _this2.setState({
+                            series: totalSeries,
+                            loaded: false
+                        });
+                    } else {
+
+                        var newArray;
+                        var colors = ['red', 'green', 'blue', 'orange', 'purple'];
+                        var colorCount = 0;
+                        console.log(j);
+
+                        for (var propName in j) {
+                            newArray = [];
+                            if (j.hasOwnProperty(propName)) {
+                                var propValue = j[propName];
+                                console.log(propName);
+                                console.log(propValue);
+                                propValue.forEach(function (item) {
+                                    var val = [new Date(item.date).getTime(), item.open];
+                                    newArray.push(val);
+                                });
+
+                                newArray = newArray.sort(function (a, b) {
+                                    return a[0] - b[0];
+                                });
+                                console.log(newArray);
+                                var newSeries = {
+                                    name: propName,
+                                    data: newArray,
+                                    color: colors[colorCount]
+                                };
+                                colorCount++;
+                                totalSeries.push(newSeries);
+                                console.log(totalSeries);
+                                // do something with each element here
+                            }
+                        }
+
+                        _this2.setState({
+                            series: totalSeries,
+                            loaded: true
+                        });
+                    }
+
+                    {/*    
+                        var newArray = [];
+                                   var id = j.pop();
+                           		j.forEach(function(item) {
+                        var val = [(new Date(item.date)).getTime(),item.open];
+                        newArray.push(val);
+                        });
+                        newArray = newArray.sort(function(a, b) {
+                        return a[0] - b[0]; });
+                        console.log(newArray);
+                        var length = this.state.series.length;
+                        var color = (length==0)?'red':(length==1)?'blue':'green';
+                        var newSeries = {
+                         name: id,
+                         data: newArray,
+                         color: color
+                         };
+                         
+                        this.setState({
+                        series: this.state.series.concat(newSeries),
                         loaded: true
-                    });
+                        }); */}
                 });
             });
         };
@@ -4863,29 +4910,74 @@ var App = function (_React$Component) {
         value: function componentDidMount() {
             var _this3 = this;
 
-            fetch('/retrievedata/AAPL', { method: 'get' }).then(function (data) {
+            fetch('/retrievedata/', { method: 'get' }).then(function (data) {
                 return data.json();
             }).then(function (j) {
 
-                var newArray = [];
-                var id = j.pop();
-                j.forEach(function (item) {
-                    var val = [new Date(item.date).getTime(), item.open];
-                    newArray.push(val);
-                });
-                newArray = newArray.sort(function (a, b) {
-                    return a[0] - b[0];
-                });
-                console.log(newArray);
+                var totalSeries = [];
+                if (j == null) {
+                    _this3.setState({
+                        series: totalSeries,
+                        loaded: false
+                    });
+                } else {
 
-                _this3.setState({
+                    var newArray;
+                    var colors = ['red', 'green', 'blue', 'orange', 'purple'];
+                    var colorCount = 0;
+                    console.log(j);
+
+                    for (var propName in j) {
+                        newArray = [];
+                        if (j.hasOwnProperty(propName)) {
+                            var propValue = j[propName];
+                            console.log(propName);
+                            console.log(propValue);
+                            propValue.forEach(function (item) {
+                                var val = [new Date(item.date).getTime(), item.open];
+                                newArray.push(val);
+                            });
+
+                            newArray = newArray.sort(function (a, b) {
+                                return a[0] - b[0];
+                            });
+                            console.log(newArray);
+                            var newSeries = {
+                                name: propName,
+                                data: newArray,
+                                color: colors[colorCount]
+                            };
+                            colorCount++;
+                            totalSeries.push(newSeries);
+                            console.log(totalSeries);
+                            // do something with each element here
+                        }
+                    }
+
+                    _this3.setState({
+                        series: totalSeries,
+                        loaded: true
+                    });
+                }
+
+                {/*
+                               var id = j.pop();
+                       		j.forEach(function(item) {
+                    var val = [(new Date(item.date)).getTime(),item.open];
+                    newArray.push(val);
+                    });
+                    newArray = newArray.sort(function(a, b) {
+                    return a[0] - b[0]; });
+                    console.log(newArray);
+                    this.setState({
                     series: [{
-                        name: id,
-                        data: newArray,
-                        color: 'red'
-                    }],
+                     name: id,
+                     data: newArray,
+                     color: 'red'
+                     }],
                     loaded: true
-                });
+                    });
+                    */}
             });
         }
     }, {
