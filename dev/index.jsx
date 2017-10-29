@@ -21,6 +21,29 @@ class App extends React.Component{
     }
     
     componentDidMount() {
+        
+        
+        socket.on('update', (j) => {
+                console.log("componentDidMount update method triggered");
+        
+        this.setState({
+		    series: [],
+		    loaded: false
+		    }, () => {
+		        
+		        if(j!=null){
+		            this.setState({
+                    series: j,
+                    loaded: true
+                    });
+		        }
+		        
+		    });
+        
+            
+        });
+        
+        {/*
         fetch('/retrievedata/', {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
@@ -72,27 +95,9 @@ class App extends React.Component{
         
         }
         
-        
-        {/*
-                    var id = j.pop();
-            		j.forEach(function(item) {
-					var val = [(new Date(item.date)).getTime(),item.open];
-					newArray.push(val);
-					});
-		newArray = newArray.sort(function(a, b) {
-        return a[0] - b[0]; });
-		console.log(newArray);
-		
-		this.setState({
-		    series: [{
-		        name: id,
-		        data: newArray,
-		        color: 'red'
-		        }],
-		    loaded: true
-		});
-		*/}
+   
         });
+        */}
     }
     
     handleInput = (event) => {
@@ -138,7 +143,11 @@ class App extends React.Component{
         this.setState({
             loaded: false
         }, function(){
-            fetch('/retrievedata/'+this.state.submit, {method: 'get'}).then(function(data) {
+            
+            socket.emit('add', this.state.submit);
+            
+            
+        {/*    fetch('/retrievedata/'+this.state.submit, {method: 'get'}).then(function(data) {
             return data.json();
         }).then((j) =>{
         
@@ -189,30 +198,8 @@ class App extends React.Component{
         
         }
         
-        {/*    
-        var newArray = [];
-                    var id = j.pop();
-            		j.forEach(function(item) {
-					var val = [(new Date(item.date)).getTime(),item.open];
-					newArray.push(val);
-					});
-		newArray = newArray.sort(function(a, b) {
-        return a[0] - b[0]; });
-		console.log(newArray);
-        var length = this.state.series.length;
-        var color = (length==0)?'red':(length==1)?'blue':'green';
-		var newSeries = {
-		        name: id,
-		        data: newArray,
-		        color: color
-		        };
-		        
-		this.setState({
-		    series: this.state.series.concat(newSeries),
-		    loaded: true
-		}); */}
 		
-        });
+        }); */}
         
         
         });
@@ -236,18 +223,7 @@ class App extends React.Component{
             }
         }
         console.log(result);
-        this.setState({
-		    series: result,
-		    loaded: true
-		}, function(){
-		    fetch('/deletedata', {
-            method: 'POST',
-            headers:{ "Content-Type": "application/json" },
-            body: JSON.stringify({
-                data: stockName
-            })
-});
-		});
+		socket.emit('delete', stockName);
         });
     }
     
@@ -448,6 +424,8 @@ class DeleteSection extends React.Component{
 class SampleChart extends React.Component{
 
    componentDidMount() {
+       
+       
         // Extend Highcharts with modules
         if (this.props.modules) {
             this.props.modules.forEach(function (module) {
@@ -458,6 +436,7 @@ class SampleChart extends React.Component{
         this.chart = new Highcharts.stockChart(this.props.container,
             this.props.options
         );
+        
     }
     //Destroy chart before unmount.
     componentWillUnmount() {

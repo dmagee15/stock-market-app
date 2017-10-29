@@ -4785,81 +4785,56 @@ var App = function (_React$Component) {
             _this.setState({
                 loaded: false
             }, function () {
-                var _this2 = this;
 
-                fetch('/retrievedata/' + this.state.submit, { method: 'get' }).then(function (data) {
-                    return data.json();
-                }).then(function (j) {
+                socket.emit('add', this.state.submit);
 
-                    var totalSeries = [];
-                    if (j == null) {
-                        _this2.setState({
-                            series: totalSeries,
-                            loaded: false
-                        });
-                    } else {
-
-                        var newArray;
-                        var colors = ['red', 'green', 'blue', 'orange', 'purple'];
-                        var colorCount = 0;
-                        console.log(j);
-
-                        for (var propName in j) {
-                            newArray = [];
-                            if (j.hasOwnProperty(propName)) {
-                                var propValue = j[propName];
-                                console.log(propName);
-                                console.log(propValue);
-                                propValue.forEach(function (item) {
-                                    var val = [new Date(item.date).getTime(), item.open];
-                                    newArray.push(val);
-                                });
-
-                                newArray = newArray.sort(function (a, b) {
-                                    return a[0] - b[0];
-                                });
-                                console.log(newArray);
-                                var newSeries = {
-                                    name: propName,
-                                    data: newArray,
-                                    color: colors[colorCount]
-                                };
-                                colorCount++;
-                                totalSeries.push(newSeries);
-                                console.log(totalSeries);
-                                // do something with each element here
-                            }
-                        }
-
-                        _this2.setState({
-                            series: totalSeries,
-                            loaded: true
-                        });
+                {/*    fetch('/retrievedata/'+this.state.submit, {method: 'get'}).then(function(data) {
+                       return data.json();
+                    }).then((j) =>{
+                            var totalSeries = [];
+                    if(j==null){
+                       this.setState({
+                    series: totalSeries,
+                    loaded: false
+                    });
                     }
-
-                    {/*    
-                        var newArray = [];
-                                   var id = j.pop();
-                           		j.forEach(function(item) {
-                        var val = [(new Date(item.date)).getTime(),item.open];
-                        newArray.push(val);
-                        });
-                        newArray = newArray.sort(function(a, b) {
-                        return a[0] - b[0]; });
-                        console.log(newArray);
-                        var length = this.state.series.length;
-                        var color = (length==0)?'red':(length==1)?'blue':'green';
-                        var newSeries = {
-                         name: id,
-                         data: newArray,
-                         color: color
-                         };
-                         
-                        this.setState({
-                        series: this.state.series.concat(newSeries),
-                        loaded: true
-                        }); */}
-                });
+                    else{
+                       
+                    var newArray;
+                    var colors = ['red','green','blue','orange','purple'];
+                    var colorCount = 0;
+                    console.log(j);
+                            for(var propName in j) {
+                       newArray = [];
+                    if(j.hasOwnProperty(propName)) {
+                       var propValue = j[propName];
+                       console.log(propName);
+                       console.log(propValue);
+                    propValue.forEach(function(item) {
+                       var val = [(new Date(item.date)).getTime(),item.open];
+                    newArray.push(val);
+                    });
+                            newArray = newArray.sort(function(a, b) {
+                    return a[0] - b[0]; });
+                    console.log(newArray);
+                    var newSeries = {
+                     name: propName,
+                     data: newArray,
+                     color: colors[colorCount]
+                     };
+                    colorCount++;
+                    totalSeries.push(newSeries);
+                    console.log(totalSeries);
+                    // do something with each element here
+                    }
+                    }
+                            this.setState({
+                    series: totalSeries,
+                    loaded: true
+                    });
+                            }
+                    		
+                    }); */}
             });
         };
 
@@ -4879,18 +4854,7 @@ var App = function (_React$Component) {
                     }
                 }
                 console.log(result);
-                this.setState({
-                    series: result,
-                    loaded: true
-                }, function () {
-                    fetch('/deletedata', {
-                        method: 'POST',
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            data: stockName
-                        })
-                    });
-                });
+                socket.emit('delete', stockName);
             });
         };
 
@@ -4908,77 +4872,75 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: "componentDidMount",
         value: function componentDidMount() {
-            var _this3 = this;
+            var _this2 = this;
 
-            fetch('/retrievedata/', { method: 'get' }).then(function (data) {
-                return data.json();
-            }).then(function (j) {
+            socket.on('update', function (j) {
+                console.log("componentDidMount update method triggered");
 
-                var totalSeries = [];
-                if (j == null) {
-                    _this3.setState({
-                        series: totalSeries,
-                        loaded: false
-                    });
-                } else {
+                _this2.setState({
+                    series: [],
+                    loaded: false
+                }, function () {
 
-                    var newArray;
-                    var colors = ['red', 'green', 'blue', 'orange', 'purple'];
-                    var colorCount = 0;
-                    console.log(j);
-
-                    for (var propName in j) {
-                        newArray = [];
-                        if (j.hasOwnProperty(propName)) {
-                            var propValue = j[propName];
-                            console.log(propName);
-                            console.log(propValue);
-                            propValue.forEach(function (item) {
-                                var val = [new Date(item.date).getTime(), item.open];
-                                newArray.push(val);
-                            });
-
-                            newArray = newArray.sort(function (a, b) {
-                                return a[0] - b[0];
-                            });
-                            console.log(newArray);
-                            var newSeries = {
-                                name: propName,
-                                data: newArray,
-                                color: colors[colorCount]
-                            };
-                            colorCount++;
-                            totalSeries.push(newSeries);
-                            console.log(totalSeries);
-                            // do something with each element here
-                        }
+                    if (j != null) {
+                        _this2.setState({
+                            series: j,
+                            loaded: true
+                        });
                     }
-
-                    _this3.setState({
-                        series: totalSeries,
-                        loaded: true
-                    });
-                }
-
-                {/*
-                               var id = j.pop();
-                       		j.forEach(function(item) {
-                    var val = [(new Date(item.date)).getTime(),item.open];
-                    newArray.push(val);
-                    });
-                    newArray = newArray.sort(function(a, b) {
-                    return a[0] - b[0]; });
-                    console.log(newArray);
-                    this.setState({
-                    series: [{
-                     name: id,
-                     data: newArray,
-                     color: 'red'
-                     }],
-                    loaded: true
-                    });
-                    */}
+                });
             });
+
+            {/*
+                fetch('/retrievedata/', {method: 'get'}).then(function(data) {
+                   return data.json();
+                }).then((j) =>{
+                   
+                var totalSeries = [];
+                if(j==null){
+                   this.setState({
+                series: totalSeries,
+                loaded: false
+                });
+                }
+                else{
+                   
+                var newArray;
+                var colors = ['red','green','blue','orange','purple'];
+                var colorCount = 0;
+                console.log(j);
+                        for(var propName in j) {
+                   newArray = [];
+                if(j.hasOwnProperty(propName)) {
+                   var propValue = j[propName];
+                   console.log(propName);
+                   console.log(propValue);
+                propValue.forEach(function(item) {
+                   var val = [(new Date(item.date)).getTime(),item.open];
+                newArray.push(val);
+                });
+                        newArray = newArray.sort(function(a, b) {
+                return a[0] - b[0]; });
+                console.log(newArray);
+                var newSeries = {
+                 name: propName,
+                 data: newArray,
+                 color: colors[colorCount]
+                 };
+                colorCount++;
+                totalSeries.push(newSeries);
+                console.log(totalSeries);
+                // do something with each element here
+                }
+                }
+                        this.setState({
+                series: totalSeries,
+                loaded: true
+                });
+                        }
+                   
+                });
+                */}
         }
     }, {
         key: "render",
@@ -5104,7 +5066,7 @@ var StockListSection = function (_React$Component2) {
     _createClass(StockListSection, [{
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this4 = this;
 
             var StockListSectionStyle = {
                 maxWidth: 800,
@@ -5128,7 +5090,7 @@ var StockListSection = function (_React$Component2) {
                 "div",
                 { style: StockListSectionStyle },
                 this.props.stocks.map(function (stock, index) {
-                    return _react2.default.createElement(StockBox, { stockInfo: stock, index: index, key: index, handleButtonDelete: _this5.props.handleButtonDelete });
+                    return _react2.default.createElement(StockBox, { stockInfo: stock, index: index, key: index, handleButtonDelete: _this4.props.handleButtonDelete });
                 })
             );
         }
@@ -5149,7 +5111,7 @@ var StockBox = function (_React$Component3) {
     _createClass(StockBox, [{
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this6 = this;
 
             var StockBoxStyle = {
                 width: '40%',
@@ -5178,7 +5140,7 @@ var StockBox = function (_React$Component3) {
                 _react2.default.createElement(
                     "button",
                     { style: StockBoxExitStyle, onClick: function onClick() {
-                            return _this7.props.handleButtonDelete(_this7.props.index);
+                            return _this6.props.handleButtonDelete(_this6.props.index);
                         } },
                     "X"
                 ),
@@ -5278,6 +5240,7 @@ var SampleChart = function (_React$Component6) {
     _createClass(SampleChart, [{
         key: "componentDidMount",
         value: function componentDidMount() {
+
             // Extend Highcharts with modules
             if (this.props.modules) {
                 this.props.modules.forEach(function (module) {
