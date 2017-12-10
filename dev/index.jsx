@@ -233,10 +233,9 @@ class App extends React.Component{
 					padding:0,
 					width: '100%',
 					height: 400,
-					borderColor: 'black',
-					borderWidth: 1,
-					borderStyle: 'solid',
-					textAlign: 'center'
+					textAlign: 'center',
+					boxShadow: '0px 0px 4px 0px',
+					overflow: 'hidden'
 					};
 		var divLoadingStyle = {
 					margin:'auto',
@@ -253,7 +252,8 @@ class App extends React.Component{
 		};
 		var loadingStyle = {
 		    fontSize: 100,
-		    paddingTop:50
+		    paddingTop:'0 0 0 0',
+		    margin: '100px 0 0 0'
 		};
 		var headingStyle = {
 		    textAlign:'center',
@@ -342,11 +342,12 @@ class StockListSection extends React.Component{
     render(){
         var StockListSectionStyle = {
             maxWidth: 800,
-            margin: 'auto',
+            margin: '50px auto 0 auto',
             textAlign: 'left',
             display:'inline-block',
             minWidth: 600,
-            float: 'right'
+            float: 'right',
+            borderLeft: '2px solid #E8E8E8',
         };
         
         var array = this.props.stocks;
@@ -392,7 +393,10 @@ class StockBox extends React.Component{
             paddingTop: 10
         }
         var StockBoxExitStyle = {
-            float: 'right'
+            float: 'right',
+            backgroundColor: 'black',
+            border: '1px solid black',
+            color: 'white'
         }
         return(
             <div style={StockBoxStyle}>
@@ -411,7 +415,7 @@ class InputSection extends React.Component{
         var InputSectionStyle = {
             display:'inline-block',
             verticalAlign: 'top',
-            marginRight: 100,
+            margin: '50px 100px 0 0',
             float:'left',
         };
         var inputStyle = {
@@ -427,18 +431,24 @@ class InputSection extends React.Component{
             height: 30,
             borderTopRightRadius: 5,
             borderBottomRightRadius: 5,
+            verticalAlign: 'bottom',
+            padding: '5px 5px 5px 5px',
+            textAlign: 'center'
+        }
+        var buttonTextStyle = {
+            fontSize: 20,
             color: 'white',
             fontWeight: 900,
             fontFamily: 'Tahoma',
-            verticalAlign: 'bottom',
-            padding: '5px 5px 5px 5px',
-            fontSize: 20
+            display:'inline-block',
+            margin: '0 0 5px 0',
+            padding: '0 0 0 0'
         }
         return(
             <div style={InputSectionStyle}>
                 <h1>Input Stock Id</h1>
                 <input style={inputStyle} type='text' value={this.props.input} onChange={this.props.handleInput}/>
-                <button type='submit' onClick={this.props.handleSubmit} style={buttonStyle}>Add</button>
+                <button type='submit' onClick={this.props.handleSubmit} style={buttonStyle}><p style={buttonTextStyle}>Add</p></button>
             </div>
             );
     }

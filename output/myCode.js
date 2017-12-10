@@ -4950,10 +4950,9 @@ var App = function (_React$Component) {
                 padding: 0,
                 width: '100%',
                 height: 400,
-                borderColor: 'black',
-                borderWidth: 1,
-                borderStyle: 'solid',
-                textAlign: 'center'
+                textAlign: 'center',
+                boxShadow: '0px 0px 4px 0px',
+                overflow: 'hidden'
             };
             var divLoadingStyle = {
                 margin: 'auto',
@@ -4970,7 +4969,8 @@ var App = function (_React$Component) {
             };
             var loadingStyle = {
                 fontSize: 100,
-                paddingTop: 50
+                paddingTop: '0 0 0 0',
+                margin: '100px 0 0 0'
             };
             var headingStyle = {
                 textAlign: 'center',
@@ -5093,11 +5093,12 @@ var StockListSection = function (_React$Component2) {
 
             var StockListSectionStyle = {
                 maxWidth: 800,
-                margin: 'auto',
+                margin: '50px auto 0 auto',
                 textAlign: 'left',
                 display: 'inline-block',
                 minWidth: 600,
-                float: 'right'
+                float: 'right',
+                borderLeft: '2px solid #E8E8E8'
             };
 
             var array = this.props.stocks;
@@ -5155,7 +5156,10 @@ var StockBox = function (_React$Component3) {
                 paddingTop: 10
             };
             var StockBoxExitStyle = {
-                float: 'right'
+                float: 'right',
+                backgroundColor: 'black',
+                border: '1px solid black',
+                color: 'white'
             };
             return _react2.default.createElement(
                 "div",
@@ -5194,7 +5198,7 @@ var InputSection = function (_React$Component4) {
             var InputSectionStyle = {
                 display: 'inline-block',
                 verticalAlign: 'top',
-                marginRight: 100,
+                margin: '50px 100px 0 0',
                 float: 'left'
             };
             var inputStyle = {
@@ -5210,12 +5214,18 @@ var InputSection = function (_React$Component4) {
                 height: 30,
                 borderTopRightRadius: 5,
                 borderBottomRightRadius: 5,
+                verticalAlign: 'bottom',
+                padding: '5px 5px 5px 5px',
+                textAlign: 'center'
+            };
+            var buttonTextStyle = {
+                fontSize: 20,
                 color: 'white',
                 fontWeight: 900,
                 fontFamily: 'Tahoma',
-                verticalAlign: 'bottom',
-                padding: '5px 5px 5px 5px',
-                fontSize: 20
+                display: 'inline-block',
+                margin: '0 0 5px 0',
+                padding: '0 0 0 0'
             };
             return _react2.default.createElement(
                 "div",
@@ -5229,7 +5239,11 @@ var InputSection = function (_React$Component4) {
                 _react2.default.createElement(
                     "button",
                     { type: "submit", onClick: this.props.handleSubmit, style: buttonStyle },
-                    "Add"
+                    _react2.default.createElement(
+                        "p",
+                        { style: buttonTextStyle },
+                        "Add"
+                    )
                 )
             );
         }
