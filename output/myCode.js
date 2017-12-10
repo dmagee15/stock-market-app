@@ -4946,7 +4946,7 @@ var App = function (_React$Component) {
         key: "render",
         value: function render() {
             var divStyle = {
-                margin: 'auto',
+                margin: 0,
                 padding: 0,
                 width: '100%',
                 height: 400,
@@ -4958,7 +4958,7 @@ var App = function (_React$Component) {
             var divLoadingStyle = {
                 margin: 'auto',
                 padding: 0,
-                width: '95%',
+                width: '100%',
                 height: 500,
                 textAlign: 'center'
             };
@@ -4976,17 +4976,30 @@ var App = function (_React$Component) {
                 textAlign: 'center',
                 width: '100%'
             };
+            var projectInfoStyle = {
+                display: 'inline-block',
+                width: '100%',
+                padding: '50px 0 0 0',
+                margin: 0,
+                overflow: 'hidden',
+                verticalAlign: 'bottom'
+            };
+            var headingTextStyle = {
+                fontFamily: 'Tahoma',
+                fontWeight: 900,
+                fontSize: 40
+            };
 
             if (this.state.loaded && this.state.series.length != 0) {
                 return _react2.default.createElement(
                     "div",
-                    null,
+                    { style: { margin: 0, padding: 0, overflow: 'hidden' } },
                     _react2.default.createElement(
                         "div",
                         { style: headingStyle },
                         _react2.default.createElement(
                             "h1",
-                            null,
+                            { style: headingTextStyle },
                             "Chart the Stock Market"
                         )
                     ),
@@ -5016,18 +5029,23 @@ var App = function (_React$Component) {
                         { style: divInputStyle },
                         _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
                         _react2.default.createElement(StockListSection, { stocks: this.state.series, handleButtonDelete: this.handleButtonDelete })
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { style: projectInfoStyle },
+                        _react2.default.createElement(ProjectInfo, null)
                     )
                 );
             } else {
                 return _react2.default.createElement(
                     "div",
-                    null,
+                    { style: { margin: 0, padding: 0, overflow: 'hidden' } },
                     _react2.default.createElement(
                         "div",
                         { style: headingStyle },
                         _react2.default.createElement(
                             "h1",
-                            null,
+                            { style: headingTextStyle },
                             "Chart the Stock Market"
                         )
                     ),
@@ -5045,6 +5063,11 @@ var App = function (_React$Component) {
                         { style: divInputStyle },
                         _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
                         _react2.default.createElement(StockListSection, { stocks: this.state.series, handleButtonDelete: this.handleButtonDelete })
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { style: projectInfoStyle },
+                        _react2.default.createElement(ProjectInfo, null)
                     )
                 );
             }
@@ -5174,6 +5197,26 @@ var InputSection = function (_React$Component4) {
                 marginRight: 100,
                 float: 'left'
             };
+            var inputStyle = {
+                border: '1px solid black',
+                borderBottomLeftRadius: 5,
+                borderTopLeftRadius: 5,
+                height: 25,
+                width: 150
+            };
+            var buttonStyle = {
+                border: 'none',
+                backgroundColor: 'black',
+                height: 30,
+                borderTopRightRadius: 5,
+                borderBottomRightRadius: 5,
+                color: 'white',
+                fontWeight: 900,
+                fontFamily: 'Tahoma',
+                verticalAlign: 'bottom',
+                padding: '5px 5px 5px 5px',
+                fontSize: 20
+            };
             return _react2.default.createElement(
                 "div",
                 { style: InputSectionStyle },
@@ -5182,11 +5225,11 @@ var InputSection = function (_React$Component4) {
                     null,
                     "Input Stock Id"
                 ),
-                _react2.default.createElement("input", { type: "text", value: this.props.input, onChange: this.props.handleInput }),
+                _react2.default.createElement("input", { style: inputStyle, type: "text", value: this.props.input, onChange: this.props.handleInput }),
                 _react2.default.createElement(
                     "button",
-                    { type: "submit", onClick: this.props.handleSubmit },
-                    "Submit"
+                    { type: "submit", onClick: this.props.handleSubmit, style: buttonStyle },
+                    "Add"
                 )
             );
         }
@@ -5267,6 +5310,117 @@ var SampleChart = function (_React$Component6) {
     }]);
 
     return SampleChart;
+}(_react2.default.Component);
+
+var ProjectInfo = function (_React$Component7) {
+    _inherits(ProjectInfo, _React$Component7);
+
+    function ProjectInfo(props) {
+        _classCallCheck(this, ProjectInfo);
+
+        return _possibleConstructorReturn(this, (ProjectInfo.__proto__ || Object.getPrototypeOf(ProjectInfo)).call(this, props));
+    }
+
+    _createClass(ProjectInfo, [{
+        key: "render",
+        value: function render() {
+            var divStyle = {
+                backgroundColor: 'gray',
+                width: '100%',
+                minHeight: 300,
+                textAlign: 'center',
+                overflow: 'hidden',
+                verticalAlign: 'bottom'
+            };
+            var infoBoxStyle = {
+                width: 300,
+                display: 'inline-block',
+                margin: '50px 50px 0px 50px',
+                verticalAlign: 'top',
+                textAlign: 'left',
+                padding: '0px 0px 50px 30px',
+                borderLeft: '2px solid black'
+            };
+            var pStyle = {
+                fontFamily: 'Arial',
+                color: '#E0E0E0',
+                margin: 0
+            };
+            var hStyle = {
+                color: 'white',
+                marginBottom: 0
+            };
+            return _react2.default.createElement(
+                "div",
+                { style: divStyle },
+                _react2.default.createElement(
+                    "div",
+                    { style: infoBoxStyle },
+                    _react2.default.createElement(
+                        "h1",
+                        { style: hStyle },
+                        "Background"
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "p",
+                        { style: pStyle },
+                        "This stock marking tracking app is a"
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "p",
+                        { style: pStyle },
+                        "FreeCodeCamp full-stack project"
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { style: infoBoxStyle },
+                    _react2.default.createElement(
+                        "h1",
+                        { style: hStyle },
+                        "Technologies"
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "p",
+                        { style: pStyle },
+                        "Front-end: React"
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "p",
+                        { style: pStyle },
+                        "Back-end: Express.js, Mongoose"
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { style: infoBoxStyle },
+                    _react2.default.createElement(
+                        "h1",
+                        { style: hStyle },
+                        "Author"
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "p",
+                        { style: pStyle },
+                        "David Magee is a web developer in"
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "p",
+                        { style: pStyle },
+                        "Houston, TX"
+                    )
+                )
+            );
+        }
+    }]);
+
+    return ProjectInfo;
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.querySelector("#container"));

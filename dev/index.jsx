@@ -229,7 +229,7 @@ class App extends React.Component{
     
    render(){
        var divStyle = {
-					margin:'auto',
+					margin:0,
 					padding:0,
 					width: '100%',
 					height: 400,
@@ -241,7 +241,7 @@ class App extends React.Component{
 		var divLoadingStyle = {
 					margin:'auto',
 					padding:0,
-					width: '95%',
+					width: '100%',
 					height: 500,
 					textAlign: 'center'
 					};
@@ -259,13 +259,25 @@ class App extends React.Component{
 		    textAlign:'center',
 		    width: '100%'
 		};
-					
+		var projectInfoStyle = {
+		    display:'inline-block',
+		    width: '100%',
+		    padding: '50px 0 0 0',
+		    margin: 0,
+		    overflow: 'hidden',
+		    verticalAlign:'bottom'
+		};
+		var headingTextStyle = {
+		    fontFamily: 'Tahoma',
+		    fontWeight: 900,
+		    fontSize: 40
+		}
         
         if(this.state.loaded && this.state.series.length != 0){
             return (
-           <div>
+           <div style={{margin:0,padding:0,overflow:'hidden'}}>
             <div style={headingStyle}>
-            <h1>Chart the Stock Market</h1>
+            <h1 style={headingTextStyle}>Chart the Stock Market</h1>
             </div>
             <div style={divStyle}>
           <SampleChart container="chart" options={
@@ -292,14 +304,17 @@ class App extends React.Component{
           <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
           <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
             </div>
+            <div style={projectInfoStyle}>
+                <ProjectInfo />
+            </div>
           </div>
           ); 
         }
         else{
             return (
-           <div>
+           <div style={{margin:0,padding:0,overflow:'hidden'}}>
             <div style={headingStyle}>
-            <h1>Chart the Stock Market</h1>
+            <h1 style={headingTextStyle}>Chart the Stock Market</h1>
             </div>
             <div style={divStyle}>
             <h1 style={loadingStyle}>Loading</h1>
@@ -307,6 +322,9 @@ class App extends React.Component{
             <div style={divInputStyle}>
             <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
             <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
+            </div>
+            <div style={projectInfoStyle}>
+                <ProjectInfo />
             </div>
           </div>
           ); 
@@ -394,13 +412,33 @@ class InputSection extends React.Component{
             display:'inline-block',
             verticalAlign: 'top',
             marginRight: 100,
-            float:'left'
+            float:'left',
         };
+        var inputStyle = {
+            border: '1px solid black',
+            borderBottomLeftRadius: 5,
+            borderTopLeftRadius: 5,
+            height: 25,
+            width: 150
+        };
+        var buttonStyle = {
+            border: 'none',
+            backgroundColor: 'black',
+            height: 30,
+            borderTopRightRadius: 5,
+            borderBottomRightRadius: 5,
+            color: 'white',
+            fontWeight: 900,
+            fontFamily: 'Tahoma',
+            verticalAlign: 'bottom',
+            padding: '5px 5px 5px 5px',
+            fontSize: 20
+        }
         return(
             <div style={InputSectionStyle}>
                 <h1>Input Stock Id</h1>
-                <input type='text' value={this.props.input} onChange={this.props.handleInput}/>
-                <button type='submit' onClick={this.props.handleSubmit}>Submit</button>
+                <input style={inputStyle} type='text' value={this.props.input} onChange={this.props.handleInput}/>
+                <button type='submit' onClick={this.props.handleSubmit} style={buttonStyle}>Add</button>
             </div>
             );
     }
@@ -448,6 +486,69 @@ class SampleChart extends React.Component{
             <div id={this.props.container}></div>
             );
     }
+      
+   
+}
+
+class ProjectInfo extends React.Component{
+    constructor(props) {
+    super(props);
+    }
+    
+   render(){
+            var divStyle = {
+                backgroundColor: 'gray',
+                width:'100%',
+                minHeight:300,
+                textAlign:'center',
+                overflow:'hidden',
+                verticalAlign: 'bottom'
+                };
+            var infoBoxStyle = {
+                width:300,
+                display:'inline-block',
+                margin: '50px 50px 0px 50px',
+                verticalAlign: 'top',
+                textAlign: 'left',
+                padding: '0px 0px 50px 30px',
+                borderLeft:'2px solid black'
+            };
+            var pStyle = {
+                fontFamily: 'Arial',
+                color: '#E0E0E0',
+                margin:0
+            };
+            var hStyle = {
+                color: 'white',
+                marginBottom:0
+            };
+            return (
+               <div style={divStyle}>
+                    <div style={infoBoxStyle}>
+                        <h1 style={hStyle}>Background</h1>
+                        <br/>
+                        <p style={pStyle}>This stock marking tracking app is a</p>
+                        <br/>
+                        <p style={pStyle}>FreeCodeCamp full-stack project</p>
+                    </div>
+                    <div style={infoBoxStyle}>
+                        <h1 style={hStyle}>Technologies</h1>
+                        <br/>
+                        <p style={pStyle}>Front-end: React</p>
+                        <br/>
+                        <p style={pStyle}>Back-end: Express.js, Mongoose</p>
+                    </div>
+                    <div style={infoBoxStyle}>
+                        <h1 style={hStyle}>Author</h1>
+                        <br/>
+                        <p style={pStyle}>David Magee is a web developer in</p>
+                        <br/>
+                        <p style={pStyle}>Houston, TX</p>
+                    </div>
+               </div>
+          ); 
+					
+   }
       
    
 }
