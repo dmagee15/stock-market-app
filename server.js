@@ -7,7 +7,6 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
 var bodyparser = require('body-parser');
-var googleFinance = require('google-finance');
 var path = require('path');
 
 var app = express();
@@ -46,7 +45,7 @@ app.use(function(req, res, next) {
 });
 
 
-routes(app, passport, googleFinance, io);
+routes(app, passport, io);
 
 var port = process.env.PORT || 8080;
 http.listen(port,  function () {

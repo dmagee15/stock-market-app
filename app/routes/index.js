@@ -3,8 +3,9 @@
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 var List = require('../models/list.js');
+var yahooFinance = require('yahoo-finance');
 
-module.exports = function (app, passport, googleFinance, io) {
+module.exports = function (app, passport, io) {
 
 	function isLoggedIn (req, res, next) {
 		if (req.isAuthenticated()) {
@@ -18,7 +19,60 @@ module.exports = function (app, passport, googleFinance, io) {
 	
 	io.on('connection', function(client){
     console.log("IO CLIENT CONNECTED");
-    
+    List
+				.find({}, function (err, result) {
+				if (err) { throw err; }
+				
+				var tempArray = result[0].stockList;
+
+				yahooFinance.historical({
+					symbols: tempArray
+					}, function (err, news) {
+					if (err){throw err;}
+					var j = news;
+					
+					var totalSeries = [];
+        if(j==null){
+            client.emit('update', null);
+        }
+        else{
+            
+        var newArray;
+        var colors = ['red','green','blue','orange','purple'];
+        var colorCount = 0;
+
+        for(var propName in j) {
+            newArray = [];
+        if(j.hasOwnProperty(propName)) {
+            var propValue = j[propName];
+
+        propValue.forEach(function(item) {
+            var val = [(new Date(item.date)).getTime(),item.open];
+			newArray.push(val);
+        });
+        
+        newArray = newArray.sort(function(a, b) {
+        return a[0] - b[0]; });
+        var newSeries = {
+		        name: propName,
+		        data: newArray,
+		        color: colors[colorCount]
+		        };
+		 colorCount++;
+		 totalSeries.push(newSeries);
+
+        // do something with each element here
+         }
+        }
+        
+        client.emit('update', totalSeries);
+                
+            }
+				});
+					
+				
+			});
+/*   
     List
 				.find({}, function (err, result) {
 				if (err) { throw err; }
@@ -76,7 +130,7 @@ module.exports = function (app, passport, googleFinance, io) {
 					
 				
 			});
-			
+*/			
 /*	client.on('update', function(){
 		List
 				.find({}, function (err, result) {
@@ -129,14 +183,7 @@ module.exports = function (app, passport, googleFinance, io) {
 				console.log(result[0].stockList);
 				
 				var tempArray = result[0].stockList;
-				console.log(typeof tempArray);
-				var length = tempArray.length;
-				console.log(length);
-				
-				for(var x=0;x<length;x++){
-					tempArray[x] = 'NASDAQ:'+tempArray[x];
-				}
-				googleFinance.historical({
+				yahooFinance.historical({
 					symbols: tempArray
 					}, function (err, news) {
 					if (err){throw err;}
@@ -190,8 +237,9 @@ module.exports = function (app, passport, googleFinance, io) {
 	
 	client.on('add', function(data){
 		console.log("added "+data);
-		
-		List
+        // this can currently only be done server-side.
+        // data is now available to be searched inside or outside of this function.
+        List
 			.find({}, function (err, result) {
 				if (err) { throw err; }
 
@@ -206,14 +254,8 @@ module.exports = function (app, passport, googleFinance, io) {
 							if(err)throw err;
 							
 							var tempArray = results3[0].stockList;
-							console.log(typeof tempArray);
-							var length = tempArray.length;
-							console.log(length);
-				
-							for(var x=0;x<length;x++){
-								tempArray[x] = 'NASDAQ:'+tempArray[x];
-							}
-							googleFinance.historical({
+
+					yahooFinance.historical({
 					symbols: tempArray
 					}, function (err, news) {
 					if (err){throw err;}
@@ -265,6 +307,7 @@ module.exports = function (app, passport, googleFinance, io) {
 					
 			
 			});
+		
 		
 		
 	});
