@@ -1,4 +1,3 @@
-console.log("Script started");
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -16,7 +15,8 @@ class App extends React.Component{
         input: '',
         submit: '',
         deleteinput: '',
-        deletesubmit: ''
+        deletesubmit: '',
+        noData: false
         };
     }
     
@@ -24,8 +24,7 @@ class App extends React.Component{
         
         
         socket.on('update', (j) => {
-                console.log("componentDidMount update method triggered");
-        
+
         this.setState({
 		    series: [],
 		    loaded: false
@@ -34,7 +33,14 @@ class App extends React.Component{
 		        if(j!=null){
 		            this.setState({
                     series: j,
-                    loaded: true
+                    loaded: true,
+                    noData: (j.length==0)
+                    });
+		        }
+		        else{
+		            this.setState({
+                    loaded: true,
+                    noData: true
                     });
 		        }
 		        
@@ -43,72 +49,15 @@ class App extends React.Component{
             
         });
         
-        {/*
-        fetch('/retrievedata/', {method: 'get'}).then(function(data) {
-            return data.json();
-        }).then((j) =>{
-            
-        var totalSeries = [];
-        if(j==null){
-            this.setState({
-		    series: totalSeries,
-		    loaded: false
-		    });
-        }
-        else{
-            
-        var newArray;
-        var colors = ['red','green','blue','orange','purple'];
-        var colorCount = 0;
-        console.log(j);
-        
-        for(var propName in j) {
-            newArray = [];
-        if(j.hasOwnProperty(propName)) {
-            var propValue = j[propName];
-            console.log(propName);
-            console.log(propValue);
-        propValue.forEach(function(item) {
-            var val = [(new Date(item.date)).getTime(),item.open];
-			newArray.push(val);
-        });
-        
-        newArray = newArray.sort(function(a, b) {
-        return a[0] - b[0]; });
-        console.log(newArray);
-        var newSeries = {
-		        name: propName,
-		        data: newArray,
-		        color: colors[colorCount]
-		        };
-		 colorCount++;
-		 totalSeries.push(newSeries);
-		 console.log(totalSeries);
-        // do something with each element here
-         }
-        }
-        
-        this.setState({
-		    series: totalSeries,
-		    loaded: true
-		});
-        
-        }
-        
-   
-        });
-        */}
     }
     
     handleInput = (event) => {
-        console.log('handleInput');
         this.setState({
             input: event.target.value
         });
     }
     
     handleSubmit = (event) => {
-        console.log('handleSubmit');
         this.setState({
             submit: this.state.input,
             input: ''
@@ -116,14 +65,12 @@ class App extends React.Component{
     }
     
     handleDeleteInput = (event) => {
-        console.log('handleDeleteInput');
         this.setState({
             deleteinput: event.target.value
         });
     }
     
     handleDelete = (event) => {
-        console.log('handleDelete');
         this.setState({
             deletesubmit: this.state.deleteinput,
             deleteinput: ''
@@ -131,8 +78,7 @@ class App extends React.Component{
     }
     
     handleButtonDelete = (data) => {
-        console.log('handleButtonDelete');
-        console.log(data);
+
         this.setState({
             deletesubmit: data,
             deleteinput: ''
@@ -222,7 +168,6 @@ class App extends React.Component{
                 stockName = temp[x].name;
             }
         }
-        console.log(result);
 		socket.emit('delete', stockName);
         });
     }
@@ -310,7 +255,28 @@ class App extends React.Component{
           </div>
           ); 
         }
-        else{
+        else if(this.state.noData && this.state.series.length==0 && this.state.loaded==true)
+            {
+            return (
+           <div style={{margin:0,padding:0,overflow:'hidden'}}>
+            <div style={headingStyle}>
+            <h1 style={headingTextStyle}>Chart the Stock Market</h1>
+            </div>
+            <div style={divStyle}>
+            <h1 style={loadingStyle}>No Data</h1>
+            </div>
+            <div style={divInputStyle}>
+            <InputSection input={this.state.input} handleInput={this.handleInput} handleSubmit={this.handleSubmit}/>
+            <StockListSection stocks={this.state.series} handleButtonDelete={this.handleButtonDelete}/>
+            </div>
+            <div style={projectInfoStyle}>
+                <ProjectInfo />
+            </div>
+          </div>
+          ); 
+        }
+        else    
+            {
             return (
            <div style={{margin:0,padding:0,overflow:'hidden'}}>
             <div style={headingStyle}>
@@ -351,7 +317,6 @@ class StockListSection extends React.Component{
         };
         
         var array = this.props.stocks;
-        console.log(array);
         var length = array.length;
         var result = [];
         for(var x=0;x<length;x++){
@@ -372,6 +337,12 @@ class StockListSection extends React.Component{
 class StockBox extends React.Component{
     constructor(props){
         super(props);
+    this.state = {
+        delete: false
+        }
+    }
+    delete = () => {
+        this.setState({delete:true}, this.props.handleButtonDelete(this.props.index));
     }
     render(){
         var StockBoxStyle = {
@@ -398,9 +369,21 @@ class StockBox extends React.Component{
             border: '1px solid black',
             color: 'white'
         }
+        var deleteText = {
+            display: 'inline-block',
+            color: 'darkred',
+            position: 'absolute',
+            top: '-10%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+        }
         return(
             <div style={StockBoxStyle}>
-                <button style={StockBoxExitStyle} onClick={() => this.props.handleButtonDelete(this.props.index)}>X</button>
+            {
+                this.state.delete &&
+                <p style={deleteText}>Deleting...</p>
+            }
+                <button style={StockBoxExitStyle} onClick={this.delete}>X</button>
                 <p style={StockBoxTextStyle}>{this.props.stockInfo.name}</p>
             </div>
             );
@@ -428,7 +411,7 @@ class InputSection extends React.Component{
         var buttonStyle = {
             border: 'none',
             backgroundColor: 'black',
-            height: 30,
+            height: 29,
             borderTopRightRadius: 5,
             borderBottomRightRadius: 5,
             verticalAlign: 'bottom',
@@ -569,4 +552,3 @@ ReactDOM.render(
     document.querySelector("#container")
     );
     
-console.log("script ended");

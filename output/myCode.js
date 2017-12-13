@@ -4730,8 +4730,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-console.log("Script started");
-
 var socket = (0, _socket2.default)('https://stock-market-app-dmagee15.c9users.io/');
 
 var App = function (_React$Component) {
@@ -4743,14 +4741,12 @@ var App = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
         _this.handleInput = function (event) {
-            console.log('handleInput');
             _this.setState({
                 input: event.target.value
             });
         };
 
         _this.handleSubmit = function (event) {
-            console.log('handleSubmit');
             _this.setState({
                 submit: _this.state.input,
                 input: ''
@@ -4758,14 +4754,12 @@ var App = function (_React$Component) {
         };
 
         _this.handleDeleteInput = function (event) {
-            console.log('handleDeleteInput');
             _this.setState({
                 deleteinput: event.target.value
             });
         };
 
         _this.handleDelete = function (event) {
-            console.log('handleDelete');
             _this.setState({
                 deletesubmit: _this.state.deleteinput,
                 deleteinput: ''
@@ -4773,8 +4767,7 @@ var App = function (_React$Component) {
         };
 
         _this.handleButtonDelete = function (data) {
-            console.log('handleButtonDelete');
-            console.log(data);
+
             _this.setState({
                 deletesubmit: data,
                 deleteinput: ''
@@ -4853,7 +4846,6 @@ var App = function (_React$Component) {
                         stockName = temp[x].name;
                     }
                 }
-                console.log(result);
                 socket.emit('delete', stockName);
             });
         };
@@ -4864,7 +4856,8 @@ var App = function (_React$Component) {
             input: '',
             submit: '',
             deleteinput: '',
-            deletesubmit: ''
+            deletesubmit: '',
+            noData: false
         };
         return _this;
     }
@@ -4875,7 +4868,6 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             socket.on('update', function (j) {
-                console.log("componentDidMount update method triggered");
 
                 _this2.setState({
                     series: [],
@@ -4885,62 +4877,17 @@ var App = function (_React$Component) {
                     if (j != null) {
                         _this2.setState({
                             series: j,
-                            loaded: true
+                            loaded: true,
+                            noData: j.length == 0
+                        });
+                    } else {
+                        _this2.setState({
+                            loaded: true,
+                            noData: true
                         });
                     }
                 });
             });
-
-            {/*
-                fetch('/retrievedata/', {method: 'get'}).then(function(data) {
-                   return data.json();
-                }).then((j) =>{
-                   
-                var totalSeries = [];
-                if(j==null){
-                   this.setState({
-                series: totalSeries,
-                loaded: false
-                });
-                }
-                else{
-                   
-                var newArray;
-                var colors = ['red','green','blue','orange','purple'];
-                var colorCount = 0;
-                console.log(j);
-                        for(var propName in j) {
-                   newArray = [];
-                if(j.hasOwnProperty(propName)) {
-                   var propValue = j[propName];
-                   console.log(propName);
-                   console.log(propValue);
-                propValue.forEach(function(item) {
-                   var val = [(new Date(item.date)).getTime(),item.open];
-                newArray.push(val);
-                });
-                        newArray = newArray.sort(function(a, b) {
-                return a[0] - b[0]; });
-                console.log(newArray);
-                var newSeries = {
-                 name: propName,
-                 data: newArray,
-                 color: colors[colorCount]
-                 };
-                colorCount++;
-                totalSeries.push(newSeries);
-                console.log(totalSeries);
-                // do something with each element here
-                }
-                }
-                        this.setState({
-                series: totalSeries,
-                loaded: true
-                });
-                        }
-                   
-                });
-                */}
         }
     }, {
         key: "render",
@@ -5036,6 +4983,40 @@ var App = function (_React$Component) {
                         _react2.default.createElement(ProjectInfo, null)
                     )
                 );
+            } else if (this.state.noData && this.state.series.length == 0 && this.state.loaded == true) {
+                return _react2.default.createElement(
+                    "div",
+                    { style: { margin: 0, padding: 0, overflow: 'hidden' } },
+                    _react2.default.createElement(
+                        "div",
+                        { style: headingStyle },
+                        _react2.default.createElement(
+                            "h1",
+                            { style: headingTextStyle },
+                            "Chart the Stock Market"
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { style: divStyle },
+                        _react2.default.createElement(
+                            "h1",
+                            { style: loadingStyle },
+                            "No Data"
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { style: divInputStyle },
+                        _react2.default.createElement(InputSection, { input: this.state.input, handleInput: this.handleInput, handleSubmit: this.handleSubmit }),
+                        _react2.default.createElement(StockListSection, { stocks: this.state.series, handleButtonDelete: this.handleButtonDelete })
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { style: projectInfoStyle },
+                        _react2.default.createElement(ProjectInfo, null)
+                    )
+                );
             } else {
                 return _react2.default.createElement(
                     "div",
@@ -5102,7 +5083,6 @@ var StockListSection = function (_React$Component2) {
             };
 
             var array = this.props.stocks;
-            console.log(array);
             var length = array.length;
             var result = [];
             for (var x = 0; x < length; x++) {
@@ -5129,14 +5109,21 @@ var StockBox = function (_React$Component3) {
     function StockBox(props) {
         _classCallCheck(this, StockBox);
 
-        return _possibleConstructorReturn(this, (StockBox.__proto__ || Object.getPrototypeOf(StockBox)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (StockBox.__proto__ || Object.getPrototypeOf(StockBox)).call(this, props));
+
+        _this5.delete = function () {
+            _this5.setState({ delete: true }, _this5.props.handleButtonDelete(_this5.props.index));
+        };
+
+        _this5.state = {
+            delete: false
+        };
+        return _this5;
     }
 
     _createClass(StockBox, [{
         key: "render",
         value: function render() {
-            var _this6 = this;
-
             var StockBoxStyle = {
                 width: '40%',
                 height: 70,
@@ -5161,14 +5148,25 @@ var StockBox = function (_React$Component3) {
                 border: '1px solid black',
                 color: 'white'
             };
+            var deleteText = {
+                display: 'inline-block',
+                color: 'darkred',
+                position: 'absolute',
+                top: '-10%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+            };
             return _react2.default.createElement(
                 "div",
                 { style: StockBoxStyle },
+                this.state.delete && _react2.default.createElement(
+                    "p",
+                    { style: deleteText },
+                    "Deleting..."
+                ),
                 _react2.default.createElement(
                     "button",
-                    { style: StockBoxExitStyle, onClick: function onClick() {
-                            return _this6.props.handleButtonDelete(_this6.props.index);
-                        } },
+                    { style: StockBoxExitStyle, onClick: this.delete },
                     "X"
                 ),
                 _react2.default.createElement(
@@ -5211,7 +5209,7 @@ var InputSection = function (_React$Component4) {
             var buttonStyle = {
                 border: 'none',
                 backgroundColor: 'black',
-                height: 30,
+                height: 29,
                 borderTopRightRadius: 5,
                 borderBottomRightRadius: 5,
                 verticalAlign: 'bottom',
@@ -5438,8 +5436,6 @@ var ProjectInfo = function (_React$Component7) {
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.querySelector("#container"));
-
-console.log("script ended");
 
 /***/ }),
 /* 38 */

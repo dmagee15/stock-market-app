@@ -24,7 +24,10 @@ module.exports = function (app, passport, io) {
 				if (err) { throw err; }
 				
 				var tempArray = result[0].stockList;
-
+				if(tempArray.length==0){
+					client.emit('update', null);
+				}
+				else{
 				yahooFinance.historical({
 					symbols: tempArray
 					}, function (err, news) {
@@ -69,7 +72,7 @@ module.exports = function (app, passport, io) {
                 
             }
 				});
-					
+				}
 				
 			});
 /*   
@@ -163,26 +166,22 @@ module.exports = function (app, passport, io) {
     
     
 	client.on('delete', function(data){
-		console.log("deleted "+data);
-		
-		var regex = /[A-Z]{2,5}$/;
-			var entry = data.match(regex);
-			console.log("Post request");
-			console.log("REGEX: "+entry);
-				
+
+
 				List
-					.update({}, {$pull: {'stockList': String(entry)}}, function(err, results2){
+					.update({}, {$pull: {'stockList': data}}, function(err, results2){
 						if(err){throw err;}
-					console.log(results2);
-					
+
 				List
 				.find({}, function (err, result) {
 				if (err) { throw err; }
 
-				console.log("retrieved data: "+result[0].stockList);
-				console.log(result[0].stockList);
-				
+				if(result[0].stockList.length==0){
+					client.emit('update', null);
+				}
+				else{
 				var tempArray = result[0].stockList;
+				
 				yahooFinance.historical({
 					symbols: tempArray
 					}, function (err, news) {
@@ -227,7 +226,7 @@ module.exports = function (app, passport, io) {
                 
             }
 				});
-					
+				}	
 				
 			});
 			});
@@ -236,31 +235,21 @@ module.exports = function (app, passport, io) {
 	});
 	
 	client.on('add', function(data){
-		console.log("added "+data);
         // this can currently only be done server-side.
         // data is now available to be searched inside or outside of this function.
         List
 			.find({}, function (err, result) {
 				if (err) { throw err; }
 
-				console.log("retrieved data: "+result[0].stockList);
-				
 				if(!result[0].stockList.includes(data)){
-					List
-					.findOneAndUpdate({}, {$push: {"stockList": data}}, function(err, results2){
-						if(err){throw err;}
-						
-						List.find({}, function(err, results3){
-							if(err)throw err;
-							
-							var tempArray = results3[0].stockList;
-
+					
+					var tempArray = result[0].stockList;
+					tempArray.push(data.toUpperCase());
 					yahooFinance.historical({
 					symbols: tempArray
 					}, function (err, news) {
 					if (err){throw err;}
 					var j = news;
-					
 					var totalSeries = [];
         if(j==null){
             io.sockets.emit('update', null);
@@ -294,14 +283,22 @@ module.exports = function (app, passport, io) {
         // do something with each element here
          }
         }
-        
-        io.sockets.emit('update', totalSeries);
-                
+        var k = totalSeries.filter(removeEmpty);
+					if(totalSeries.length==k.length){
+						List
+						.findOneAndUpdate({}, {$push: {"stockList": data.toUpperCase()}}, function(err, results2){
+						if(err){throw err;}
+						});
+                		io.sockets.emit('update', totalSeries);
+					}
+					else{
+						io.sockets.emit('update', k);
+					}
+
             }
 				});
-							});
 						
-					});
+					
 					
 				}
 					
@@ -311,7 +308,9 @@ module.exports = function (app, passport, io) {
 		
 		
 	});
-	
+	function removeEmpty(series){
+		return series.data.length>0;
+	}
 	client.on('disconnect', function(){});
 	});
 	
@@ -326,12 +325,8 @@ module.exports = function (app, passport, io) {
 			List
 			.find({}, function (err, result) {
 				if (err) { throw err; }
-
-				console.log("retrieved data: "+result[0].stockList);
-				console.log(result[0].stockList);
 				
 				if(result[0].stockList.length==0){
-					console.log("UNDEFINED");
 					var firstList = new List({
 		    				'stockList': []
 							});
@@ -342,10 +337,8 @@ module.exports = function (app, passport, io) {
 					
 				
 				var tempArray = result[0].stockList;
-				console.log(typeof tempArray);
 				var length = tempArray.length;
-				console.log(length);
-				
+
 				for(var x=0;x<length;x++){
 					tempArray[x] = 'NASDAQ:'+tempArray[x];
 				}
