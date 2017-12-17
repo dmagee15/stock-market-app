@@ -521,7 +521,7 @@ class ProjectInfo extends React.Component{
                     <div style={infoBoxStyle}>
                         <h1 style={hStyle}>Background</h1>
                         <br/>
-                        <p style={pStyle}>This stock marking tracking app is a</p>
+                        <p style={pStyle}>This stock market tracking app is a</p>
                         <br/>
                         <p style={pStyle}>FreeCodeCamp full-stack project</p>
                     </div>
