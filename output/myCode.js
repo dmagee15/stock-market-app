@@ -5378,7 +5378,7 @@ var ProjectInfo = function (_React$Component7) {
                     _react2.default.createElement(
                         "p",
                         { style: pStyle },
-                        "This stock marking tracking app is a"
+                        "This stock market tracking app is a"
                     ),
                     _react2.default.createElement("br", null),
                     _react2.default.createElement(
