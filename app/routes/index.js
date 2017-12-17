@@ -59,7 +59,6 @@ module.exports = function (app, yahooFinance, io) {
 		 colorCount++;
 		 totalSeries.push(newSeries);
 
-        // do something with each element here
          }
         }
         
