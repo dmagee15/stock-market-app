@@ -10,7 +10,7 @@ var path = require('path');
 var yahooFinance = require('yahoo-finance');
 
 var app = express();
-require('dotenv').load();
+//require('dotenv').load();
 var http = require('http').createServer(app);
 
 var port = process.env.PORT || 8080;
