@@ -10,8 +10,14 @@ var path = require('path');
 var yahooFinance = require('yahoo-finance');
 
 var app = express();
-//require('dotenv').load();
+require('dotenv').load();
 var http = require('http').createServer(app);
+
+var port = process.env.PORT || 8080;
+http.listen(port,  function () {
+	console.log('Node.js listening on port ' + port + '...');
+});
+
 var io = require('socket.io')(http);
 
 mongoose.connect(process.env.MONGO_URI);
@@ -40,8 +46,3 @@ app.use(function(req, res, next) {
 
 
 routes(app, yahooFinance, io);
-
-var port = process.env.PORT || 8080;
-http.listen(port,  function () {
-	console.log('Node.js listening on port ' + port + '...');
-});
