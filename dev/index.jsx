@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import Highcharts from "highcharts/highstock";
 import addFunnel from "highcharts/modules/funnel";
 import openSocket from 'socket.io-client';
-const socket = openSocket('https://stock-market-app-dmagee15.c9users.io/');
+const socket = openSocket('https://whispering-caverns-54453.herokuapp.com/');
 
 class App extends React.Component{
     constructor(props) {
