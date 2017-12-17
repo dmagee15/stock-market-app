@@ -528,7 +528,7 @@ class ProjectInfo extends React.Component{
                     <div style={infoBoxStyle}>
                         <h1 style={hStyle}>Technologies</h1>
                         <br/>
-                        <p style={pStyle}>Front-end: React</p>
+                        <p style={pStyle}>Front-end: React, Highcharts</p>
                         <br/>
                         <p style={pStyle}>Back-end: Express.js, Mongoose</p>
                     </div>
