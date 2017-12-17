@@ -10,7 +10,13 @@ module.exports = function (app, yahooFinance, io) {
     List
 				.find({}, function (err, result) {
 				if (err) { throw err; }
-				
+				if(result[0]==undefined){
+					var newList = new List();
+					newList.stockList = [];
+					newList.save();
+					client.emit('update', null);
+				}
+				else{
 				var tempArray = result[0].stockList;
 				if(tempArray.length==0){
 					client.emit('update', null);
@@ -62,7 +68,7 @@ module.exports = function (app, yahooFinance, io) {
             }
 				});
 				}
-				
+				}
 			});
     
 	client.on('delete', function(data){

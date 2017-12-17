@@ -19,8 +19,7 @@ http.listen(port,  function () {
 });
 
 var io = require('socket.io')(http);
-io.set('origins', '*:*');
-io.set('match origin protocol', true);
+
 
 mongoose.connect(process.env.MONGO_URI);
 mongoose.Promise = global.Promise;
