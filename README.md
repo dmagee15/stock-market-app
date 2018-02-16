@@ -27,7 +27,7 @@ npm v3.10.10 or greater
 2. Open the command line, navigate to the directory of your choice and type:
 
 ```
-git clone https://github.com/yourUsername/pinterest-app.git
+git clone https://github.com/yourUsername/stock-market-app.git
 ```
 
 where 'yourUsername' is your github username.
