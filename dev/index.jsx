@@ -181,7 +181,8 @@ class App extends React.Component{
 					height: 400,
 					textAlign: 'center',
 					boxShadow: '0px 0px 4px 0px',
-					overflow: 'hidden'
+                    overflow: 'hidden',
+                    background: 'white'
 					};
 		var divLoadingStyle = {
 					margin:'auto',
@@ -199,11 +200,11 @@ class App extends React.Component{
 		var loadingStyle = {
 		    fontSize: 100,
 		    paddingTop:'0 0 0 0',
-		    margin: '100px 0 0 0'
+            margin: '100px 0 0 0'
 		};
 		var headingStyle = {
 		    textAlign:'center',
-		    width: '100%'
+            width: '100%'
 		};
 		var projectInfoStyle = {
 		    display:'inline-block',
@@ -216,12 +217,13 @@ class App extends React.Component{
 		var headingTextStyle = {
 		    fontFamily: 'Tahoma',
 		    fontWeight: 900,
-		    fontSize: 40
+            fontSize: 40,
+            color: 'white'
 		}
         
         if(this.state.loaded && this.state.series.length != 0){
             return (
-           <div style={{margin:0,padding:0,overflow:'hidden'}}>
+           <div style={{margin:0,padding:0,overflow:'hidden',background:'black'}}>
             <div style={headingStyle}>
             <h1 style={headingTextStyle}>Chart the Stock Market</h1>
             </div>
@@ -259,7 +261,7 @@ class App extends React.Component{
         else if(this.state.noData && this.state.series.length==0 && this.state.loaded==true)
             {
             return (
-           <div style={{margin:0,padding:0,overflow:'hidden'}}>
+           <div style={{margin:0,padding:0,overflow:'hidden',background:'black'}}>
             <div style={headingStyle}>
             <h1 style={headingTextStyle}>Chart the Stock Market</h1>
             </div>
@@ -279,7 +281,7 @@ class App extends React.Component{
         else    
             {
             return (
-           <div style={{margin:0,padding:0,overflow:'hidden'}}>
+           <div style={{margin:0,padding:0,overflow:'hidden',background:'black'}}>
             <div style={headingStyle}>
             <h1 style={headingTextStyle}>Chart the Stock Market</h1>
             </div>
@@ -349,7 +351,7 @@ class StockBox extends React.Component{
         var StockBoxStyle = {
             width: '40%',
             height: 70,
-            borderBottomColor: 'black',
+            borderBottomColor: 'white',
 			borderBottomWidth: 1,
 			borderBottomStyle: 'solid',
 			display: 'inline-block',
@@ -358,17 +360,19 @@ class StockBox extends React.Component{
 			marginLeft: '4%',
 			marginBottom: 25,
 			textAlign: 'center',
-			position: 'relative'
+            position: 'relative',
+            color: 'white'
         };
         var StockBoxTextStyle = {
             fontSize: 25,
-            paddingTop: 10
+            paddingTop: 10,
+            color:'white'
         }
         var StockBoxExitStyle = {
             float: 'right',
-            backgroundColor: 'black',
+            backgroundColor: 'white',
             border: '1px solid black',
-            color: 'white'
+            color: 'black'
         }
         var deleteText = {
             display: 'inline-block',
@@ -401,17 +405,18 @@ class InputSection extends React.Component{
             verticalAlign: 'top',
             margin: '50px 100px 0 0',
             float:'left',
+            color:'white'
         };
         var inputStyle = {
-            border: '1px solid black',
+            border: '1px solid white',
             borderBottomLeftRadius: 5,
             borderTopLeftRadius: 5,
             height: 25,
             width: 150
         };
         var buttonStyle = {
-            border: 'none',
-            backgroundColor: 'black',
+            border: '1px solid black',
+            backgroundColor: '#D8D8D8',
             height: 29,
             borderTopRightRadius: 5,
             borderBottomRightRadius: 5,
@@ -421,7 +426,7 @@ class InputSection extends React.Component{
         }
         var buttonTextStyle = {
             fontSize: 20,
-            color: 'white',
+            color: 'black',
             fontWeight: 900,
             fontFamily: 'Tahoma',
             display:'inline-block',
@@ -445,9 +450,9 @@ class DeleteSection extends React.Component{
     render(){
         return(
             <div>
-                <h1>Delete Stock Id</h1>
+                <h1 style={{color:'white'}}>Delete Stock Id</h1>
                 <input type='text' value={this.props.input} onChange={this.props.handleDeleteInput}/>
-                <button type='submit' onClick={this.props.handleDelete}>Delete</button>
+                <button style={{background:'white'}} type='submit' onClick={this.props.handleDelete}>Delete</button>
             </div>
             );
     }
@@ -477,7 +482,7 @@ class SampleChart extends React.Component{
     //Create the div which the chart will be rendered to.
     render() {
         return (
-            <div id={this.props.container}></div>
+            <div style={{border: '1px solid white'}} id={this.props.container}></div>
             );
     }
       
